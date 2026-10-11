@@ -6,21 +6,20 @@
 //
 // The website in /site is served for everything else (as static assets).
 
+import { handleDiscord } from "./discord.js";
 import { oembedJson, pickMedia, renderEmbed, title } from "./embed.js";
 import { fetchInstagram } from "./instagram.js";
-import { fetchTweet } from "./twitter.js";
+import { matchPost, parsePostLink, POST_UNAVAILABLE } from "./links.js";
 import { BROWSER_UA, FetchError } from "./util.js";
 
 // User agents of link-preview crawlers (Discord, Telegram, Slack, ...).
 const BOT_UA =
   /discordbot|twitterbot|telegrambot|slackbot|facebookexternalhit|whatsapp|mastodon|iframely|embedly|redditbot|skypeuripreview|linkedinbot|vkshare|bluesky|cardyb|matrix|synapse|element/i;
 
-const TWEET_PATH = /^\/(?:(?<user>\w+)\/|i\/(?:web\/)?)?status(?:es)?\/(?<id>\d+)(?:\/(?:photo|video)\/(?<n>\d))?\/?$/;
-const IG_PATH = /^\/(?:[\w.]+\/)?(?:p|reel|reels|tv)\/(?<code>[\w-]+)(?:\/(?<n>\d+))?\/?$/;
 const IG_MEDIA_PATH = /^\/ig\/media\/(?<code>[\w-]+)\/(?<i>\d+)$/;
 
-const X_HOSTS = /(^|\.)(x\.com|twitter\.com|fixupx\.com|fxtwitter\.com|vxtwitter\.com|fixvx\.com)$/i;
-const IG_HOSTS = /(^|\.)(instagram\.com|ddinstagram\.com|kkinstagram\.com|instagramez\.com)$/i;
+// Hosts /api/media will relay: files people attach to Discord bot commands.
+const DISCORD_CDN = /^(cdn\.discordapp\.com|media\.discordapp\.net)$/;
 
 const CORS = { "Access-Control-Allow-Origin": "*" };
 
@@ -32,55 +31,6 @@ const html = (body) =>
   new Response(body, {
     headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "public, max-age=300" },
   });
-
-function parseIndex(raw) {
-  return raw && /^\d+$/.test(raw) ? Number(raw) : null;
-}
-
-// Works out which post a path refers to; null if it isn't a post link.
-function matchPost(pathname, searchParams) {
-  let m = pathname.match(TWEET_PATH);
-  if (m) {
-    return {
-      original: `https://x.com${pathname}`,
-      index: parseIndex(m.groups.n),
-      fetch: () => fetchTweet(m.groups.id),
-      mediaUrl: null,
-    };
-  }
-  m = pathname.match(IG_PATH);
-  if (m) {
-    const { code } = m.groups;
-    return {
-      original: `https://www.instagram.com${pathname}`,
-      // Instagram carousels use ?img_index=N; also accept /p/CODE/N.
-      index: parseIndex(m.groups.n || searchParams.get("img_index")),
-      fetch: () => fetchInstagram(code),
-      // Instagram video URLs are signed and expire, so point Discord at our
-      // redirect endpoint, which always resolves to a fresh URL.
-      mediaUrl: (base) => (media, i) => (media.kind === "video" ? `${base}/ig/media/${code}/${i}` : media.url),
-    };
-  }
-  return null;
-}
-
-// Parses a pasted X/Instagram link; returns { url, target } or { error }.
-function parsePostLink(link) {
-  let url;
-  try {
-    url = new URL(link);
-  } catch {
-    return { error: "That doesn't look like a link." };
-  }
-  if (!X_HOSTS.test(url.hostname) && !IG_HOSTS.test(url.hostname)) {
-    return { error: "Only X/Twitter and Instagram post links are supported." };
-  }
-  const target = matchPost(url.pathname, url.searchParams);
-  if (!target) return { error: "That isn't a link to a single post." };
-  return { url, target };
-}
-
-const POST_UNAVAILABLE = "Couldn't load that post. It may be private, deleted or age-restricted.";
 
 // JSON summary of a post for the website's preview.
 async function apiPost(link, base) {
@@ -136,12 +86,32 @@ async function apiDownload(link, rawIndex) {
   return new Response(upstream.body, { headers });
 }
 
+// Relays a Discord attachment to the website, which can't read Discord's CDN
+// directly. Only Discord's file hosts are allowed, so this isn't an open proxy.
+async function apiMedia(src) {
+  let url;
+  try {
+    url = new URL(src);
+  } catch {
+    return text(400, "Bad media link.");
+  }
+  if (url.protocol !== "https:" || !DISCORD_CDN.test(url.hostname)) return text(400, "Only Discord attachments are supported.");
+  const upstream = await fetch(url, { headers: { "User-Agent": BROWSER_UA } });
+  if (!upstream.ok) return text(502, "That Discord file has expired. Run the command again.");
+  const headers = new Headers({ "Content-Type": upstream.headers.get("Content-Type") || "application/octet-stream", ...CORS });
+  const length = upstream.headers.get("Content-Length");
+  if (length) headers.set("Content-Length", length);
+  return new Response(upstream.body, { headers });
+}
+
 export default {
-  async fetch(request) {
+  async fetch(request, env, ctx) {
     const url = new URL(request.url);
     const base = url.origin;
     const { pathname, searchParams } = url;
 
+    if (pathname === "/discord") return handleDiscord(request, env, ctx, base);
+    if (pathname === "/api/media") return apiMedia(searchParams.get("src") || "");
     if (pathname === "/oembed") return json(200, oembedJson(searchParams));
     if (pathname === "/api/post") return apiPost(searchParams.get("url") || "", base);
     if (pathname === "/api/download") return apiDownload(searchParams.get("url") || "", searchParams.get("i"));

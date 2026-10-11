@@ -143,13 +143,16 @@
     updateWarnings();
   }
 
-  upload.addEventListener("change", () => {
-    const file = upload.files[0];
-    upload.value = "";
-    if (!file) return;
+  function setFile(file) {
     const kind = file.type === "image/gif" ? "gif" : file.type.startsWith("image/") ? "image" : "video";
     showError("");
     setSource({ type: "file", file, kind, url: URL.createObjectURL(file) });
+  }
+
+  upload.addEventListener("change", () => {
+    const file = upload.files[0];
+    upload.value = "";
+    if (file) setFile(file);
   });
 
   $("clear-source").addEventListener("click", () => {
@@ -259,6 +262,7 @@
 
   window.gimmaker = {
     source: () => source,
+    setFile,
     // Size of the media as shown in the preview, for tools that need it.
     sourceSize() {
       const node = mediaBox.querySelector("video, img");
@@ -295,8 +299,10 @@
 
   updateWarnings();
 
-  // Restore a link from ?url=, or the last one used, so it stays pinned.
-  const preset = new URLSearchParams(location.search).get("url") || store.get();
+  // Restore a link from ?url=, or the last one used, so it stays pinned. A file
+  // handed over by the Discord bot (?media=) takes its place instead.
+  const params = new URLSearchParams(location.search);
+  const preset = params.get("url") || (params.has("media") ? "" : store.get());
   if (preset) {
     input.value = preset;
     update();

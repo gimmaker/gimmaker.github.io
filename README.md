@@ -75,3 +75,31 @@ Cloudflare API token from the "Edit Cloudflare Workers" template) and `CLOUDFLAR
 **Website (GitHub Pages):** `.github/workflows/pages.yml` publishes `site/` on every push to
 `main`. Set the worker's address in `site/config.js` so the Pages copy knows where the link
 fixer is.
+
+## Discord bot
+
+The worker also serves a Discord bot at `/discord` (HTTP interactions, so no always-on
+process is needed). It can be installed on a server or on your own account, and works in
+the bot's DMs, other DMs and group chats.
+
+- `/gimmideo link:` and **Apps → Gimmideo FC** (right-click a message) reply with the fixed
+  link, so the video plays, plus **Download result** and **Open in gimmaker** buttons.
+- `/gimmaudio`, `/deepfry`, `/caption` and `/gif` take a `file` or a `link` plus their options
+  and reply privately with a button. The website opens with everything filled in and runs
+  the edit in the browser. Discord attachments reach the site through `/api/media`, which
+  only relays files from Discord's own file hosts.
+
+Setup:
+
+1. Create an application at <https://discord.com/developers/applications>.
+2. Put its **Application ID** and **Public Key** in `wrangler.toml` under `[vars]`
+   (`DISCORD_APPLICATION_ID`, `DISCORD_PUBLIC_KEY`) and run `npm run deploy`.
+3. In the application's **General Information**, set **Interactions Endpoint URL** to
+   `https://<worker>/discord`.
+4. Under **Installation**, enable **User Install** and **Guild Install** with the
+   `applications.commands` scope.
+5. Register the commands with the bot token (from the **Bot** page; keep it secret):
+
+   ```bash
+   DISCORD_APPLICATION_ID=... DISCORD_TOKEN=... npm run discord:register
+   ```
