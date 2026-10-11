@@ -40,15 +40,22 @@
     return node;
   }
 
-  function renderMedia(post) {
+  function renderMedia(post, original) {
     mediaBox.classList.toggle("multi", post.shown.length > 1);
     for (const m of post.shown) {
+      const item = el("figure", { className: "media-item" });
       // index.html sets referrer to no-referrer; X and Instagram's CDNs refuse ours.
-      mediaBox.append(
+      item.append(
         m.kind === "video"
           ? el("video", { src: m.url, poster: m.thumbnail || "", controls: true, muted: true, playsInline: true })
           : el("img", { src: m.url, alt: "", loading: "lazy" }),
+        el("a", {
+          className: "download",
+          href: `${WORKER}/api/download?url=${encodeURIComponent(original)}&i=${m.index}`,
+          textContent: m.kind === "video" ? "Download video" : "Download photo",
+        }),
       );
+      mediaBox.append(item);
     }
   }
 
@@ -59,7 +66,7 @@
       const res = await fetch(`${WORKER}/api/post?url=${encodeURIComponent(original)}`);
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Couldn't load that post.");
-      renderMedia(data);
+      renderMedia(data, original);
     } catch (e) {
       loading.textContent = e.message.startsWith("Failed to fetch") ? "Couldn't reach the link fixer." : e.message;
       loading.hidden = false;

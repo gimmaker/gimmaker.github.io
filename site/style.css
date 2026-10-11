@@ -171,14 +171,14 @@ button:hover { filter: brightness(1.1); }
 
 .media {
   display: grid;
-  gap: 4px;
+  gap: 0.75rem;
   margin-top: 1rem;
-  border-radius: 8px;
-  overflow: hidden;
 }
 
 .media:empty { display: none; }
 .media.multi { grid-template-columns: 1fr 1fr; }
+
+.media-item { margin: 0; }
 
 .media img,
 .media video {
@@ -187,7 +187,22 @@ button:hover { filter: brightness(1.1); }
   max-height: 32rem;
   object-fit: contain;
   background: #000;
+  border-radius: 8px;
 }
+
+.download {
+  display: inline-block;
+  margin-top: 0.6rem;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  background: var(--accent);
+  color: var(--accent-text);
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+
+.download:hover { filter: brightness(1.1); }
 
 #loading { margin: 1rem 0 0; }
 

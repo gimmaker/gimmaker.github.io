@@ -9,7 +9,7 @@
 import { oembedJson, pickMedia, renderEmbed, title } from "./embed.js";
 import { fetchInstagram } from "./instagram.js";
 import { fetchTweet } from "./twitter.js";
-import { FetchError } from "./util.js";
+import { BROWSER_UA, FetchError } from "./util.js";
 
 // User agents of link-preview crawlers (Discord, Telegram, Slack, ...).
 const BOT_UA =
@@ -64,19 +64,28 @@ function matchPost(pathname, searchParams) {
   return null;
 }
 
-// JSON summary of a post for the website's preview card.
-async function apiPost(link, base) {
+// Parses a pasted X/Instagram link; returns { url, target } or { error }.
+function parsePostLink(link) {
   let url;
   try {
     url = new URL(link);
   } catch {
-    return json(400, { error: "That doesn't look like a link." });
+    return { error: "That doesn't look like a link." };
   }
   if (!X_HOSTS.test(url.hostname) && !IG_HOSTS.test(url.hostname)) {
-    return json(400, { error: "Only X/Twitter and Instagram post links are supported." });
+    return { error: "Only X/Twitter and Instagram post links are supported." };
   }
   const target = matchPost(url.pathname, url.searchParams);
-  if (!target) return json(400, { error: "That isn't a link to a single post." });
+  if (!target) return { error: "That isn't a link to a single post." };
+  return { url, target };
+}
+
+const POST_UNAVAILABLE = "Couldn't load that post. It may be private, deleted or age-restricted.";
+
+// JSON summary of a post for the website's preview.
+async function apiPost(link, base) {
+  const { url, target, error } = parsePostLink(link);
+  if (error) return json(400, { error });
 
   try {
     const post = await target.fetch();
@@ -84,13 +93,47 @@ async function apiPost(link, base) {
     return json(200, {
       ...post,
       title: title(post),
-      shown: pickMedia(post, target.index),
+      // index lets the website ask /api/download for a specific item.
+      shown: pickMedia(post, target.index).map((m) => ({ ...m, index: post.media.indexOf(m) })),
       fixedUrl: `${base}${url.pathname}${query}`,
     });
   } catch (e) {
     if (!(e instanceof FetchError)) throw e;
-    return json(502, { error: "Couldn't load that post. It may be private, deleted or age-restricted." });
+    return json(502, { error: POST_UNAVAILABLE });
   }
+}
+
+// Streams one media item of a post back as a file download. Browsers ignore the
+// download attribute on cross-site links, so the file has to come from us. Only
+// media belonging to the given post can be fetched, so this isn't an open proxy.
+async function apiDownload(link, rawIndex) {
+  const { target, error } = parsePostLink(link);
+  if (error) return text(400, error);
+
+  let post;
+  try {
+    post = await target.fetch();
+  } catch (e) {
+    if (!(e instanceof FetchError)) throw e;
+    return text(502, POST_UNAVAILABLE);
+  }
+  const index = Number(rawIndex) || 0;
+  const media = post.media[index];
+  if (!media) return text(404, "Media not found.");
+
+  const upstream = await fetch(media.url, { headers: { "User-Agent": BROWSER_UA } });
+  if (!upstream.ok) return text(502, "Couldn't download that file.");
+
+  const ext = media.kind === "video" ? "mp4" : "jpg";
+  const id = post.url.split("/").filter(Boolean).pop();
+  const headers = new Headers({
+    "Content-Type": upstream.headers.get("Content-Type") || (media.kind === "video" ? "video/mp4" : "image/jpeg"),
+    "Content-Disposition": `attachment; filename="gimmaker-${post.site.toLowerCase()}-${id}-${index + 1}.${ext}"`,
+    ...CORS,
+  });
+  const length = upstream.headers.get("Content-Length");
+  if (length) headers.set("Content-Length", length);
+  return new Response(upstream.body, { headers });
 }
 
 export default {
@@ -101,6 +144,7 @@ export default {
 
     if (pathname === "/oembed") return json(200, oembedJson(searchParams));
     if (pathname === "/api/post") return apiPost(searchParams.get("url") || "", base);
+    if (pathname === "/api/download") return apiDownload(searchParams.get("url") || "", searchParams.get("i"));
 
     let m = pathname.match(IG_MEDIA_PATH);
     if (m) {
