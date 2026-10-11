@@ -10,7 +10,8 @@
   const error = $("error");
   const result = $("result");
   const fixedUrl = $("fixed-url");
-  const copied = $("copied");
+  const fixedText = $("fixed-url-text");
+  const downloads = $("downloads");
   const loading = $("loading");
   const mediaBox = $("media");
 
@@ -40,28 +41,36 @@
     return node;
   }
 
+  function clearMedia() {
+    mediaBox.replaceChildren();
+    downloads.replaceChildren();
+  }
+
   function renderMedia(post, original) {
-    mediaBox.classList.toggle("multi", post.shown.length > 1);
-    for (const m of post.shown) {
-      const item = el("figure", { className: "media-item" });
+    const many = post.shown.length > 1;
+    mediaBox.classList.toggle("multi", many);
+    post.shown.forEach((m, n) => {
       // index.html sets referrer to no-referrer; X and Instagram's CDNs refuse ours.
-      item.append(
+      mediaBox.append(
         m.kind === "video"
           ? el("video", { src: m.url, poster: m.thumbnail || "", controls: true, muted: true, playsInline: true })
           : el("img", { src: m.url, alt: "", loading: "lazy" }),
-        el("a", {
-          className: "download",
-          href: `${WORKER}/api/download?url=${encodeURIComponent(original)}&i=${m.index}`,
-          textContent: m.kind === "video" ? "Download video" : "Download photo",
-        }),
       );
-      mediaBox.append(item);
-    }
+      const link = el("a", {
+        className: "option",
+        href: `${WORKER}/api/download?url=${encodeURIComponent(original)}&i=${m.index}`,
+      });
+      link.append(
+        el("span", { className: "option-title", textContent: m.kind === "video" ? "Download video" : "Download photo" }),
+        el("span", { className: "option-sub", textContent: (m.kind === "video" ? "MP4" : "JPG") + (many ? ` · ${n + 1}` : "") }),
+      );
+      downloads.append(link);
+    });
   }
 
   async function loadMedia(original) {
     loading.hidden = true;
-    mediaBox.replaceChildren();
+    clearMedia();
     try {
       const res = await fetch(`${WORKER}/api/post?url=${encodeURIComponent(original)}`);
       const data = await res.json();
@@ -81,15 +90,14 @@
     if (!raw) {
       showError("");
       result.hidden = true;
-      mediaBox.replaceChildren();
+      clearMedia();
       return;
     }
     const { fixed, error: message } = fixLink(raw);
     showError(message || "");
     result.hidden = !fixed;
-    if (!fixed) return mediaBox.replaceChildren();
-    fixedUrl.textContent = fixed;
-    copied.textContent = "";
+    if (!fixed) return clearMedia();
+    fixedText.textContent = fixed;
     loadMedia(raw);
   }
 
@@ -104,14 +112,17 @@
     update();
   });
 
+  // The box shows the link; clicking it copies and briefly says so in place.
   fixedUrl.addEventListener("click", async () => {
+    const link = fixedText.textContent;
+    if (link === "Copied!" || link === "Couldn't copy") return;
     try {
-      await navigator.clipboard.writeText(fixedUrl.textContent);
-      copied.textContent = "Copied!";
+      await navigator.clipboard.writeText(link);
+      fixedText.textContent = "Copied!";
     } catch {
-      copied.textContent = "Couldn't copy";
+      fixedText.textContent = "Couldn't copy";
     }
-    setTimeout(() => (copied.textContent = ""), 1500);
+    setTimeout(() => (fixedText.textContent = link), 1200);
   });
 
   // Supports sharing a prefilled tool link: ?url=<post link>

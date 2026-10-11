@@ -10,81 +10,132 @@
   <meta property="og:title" content="gimmaker">
   <meta property="og:description" content="Small tools for links, posts and media.">
   <meta name="theme-color" content="#000000">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✳️</text></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='black'/><text x='50' y='70' font-family='Georgia' font-size='60' fill='white' text-anchor='middle'>G</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&display=swap">
-  <link rel="stylesheet" href="style.css?v=9">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Montserrat:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="style.css?v=12">
 </head>
 <body>
-  <header class="hero">
-    <h1 class="wordmark"><span>gimmaker<sup>®</sup></span></h1>
-    <p class="hero-sub"><span>Small tools for links, posts &amp; media</span></p>
+  <header class="topbar">
+    <a class="topbar-mark" href="./">GIMMAKER</a>
+    <a class="topbar-link" href="https://github.com/gimmaker/gimmaker.github.io">GitHub</a>
   </header>
 
-  <nav class="toolbar" aria-label="Tools">
-    <span class="toolbar-label">(Tools)</span>
-    <div class="tabs" role="tablist">
-      <button class="tab" role="tab" id="tab-embed" aria-controls="panel-embed" aria-selected="true">Gimmick Extractor</button>
-      <button class="tab" role="tab" id="tab-tool2" aria-controls="panel-tool2" aria-selected="false" tabindex="-1">Tool 2</button>
-      <button class="tab" role="tab" id="tab-tool3" aria-controls="panel-tool3" aria-selected="false" tabindex="-1">Tool 3</button>
-      <button class="tab" role="tab" id="tab-tool4" aria-controls="panel-tool4" aria-selected="false" tabindex="-1">Tool 4</button>
+  <section class="hero">
+    <p class="hero-kicker fade-up">Small tools, one page.</p>
+    <!-- Hovering swaps the ghost word to the front. -->
+    <div class="hero-mark fade-up" style="animation-delay: 0.08s">
+      <span class="hero-ghost" aria-hidden="true">TOOLS</span>
+      <h1 class="hero-title">GIMMAKER</h1>
     </div>
-  </nav>
+    <div class="hero-foot fade-up" style="animation-delay: 0.16s">
+      <p>Extract posts, fix Discord embeds and download media. No sign-up, nothing to install.</p>
+    </div>
+  </section>
 
-  <main>
-    <section class="panel" role="tabpanel" id="panel-embed" aria-labelledby="tab-embed">
-      <div class="panel-head">
-        <span>Tool</span>
-        <span>(01)</span>
+  <div class="layout">
+    <aside class="tool-list">
+      <div class="section-head">
+        <span class="section-num">01</span>
+        <div>
+          <h2 class="section-title">Choose Your Tool</h2>
+        </div>
       </div>
-      <h2 class="panel-title">Gimmick Extractor</h2>
+      <div role="tablist" aria-label="Tools" aria-orientation="vertical">
+        <button class="tool-row" role="tab" id="tab-embed" aria-controls="panel-embed" aria-selected="true">
+          <span class="radio" aria-hidden="true"></span>
+          <span class="tool-text">
+            <span class="tool-name">Gimmick Extractor <span class="tool-alt">X · Instagram</span></span>
+            <span class="tool-desc">Fix X and Instagram embeds for Discord and download the video.</span>
+          </span>
+        </button>
+        <button class="tool-row" role="tab" id="tab-tool2" aria-controls="panel-tool2" aria-selected="false" tabindex="-1">
+          <span class="radio" aria-hidden="true"></span>
+          <span class="tool-text">
+            <span class="tool-name">Tool 2 <span class="tool-alt">Soon</span></span>
+            <span class="tool-desc">Coming soon.</span>
+          </span>
+        </button>
+        <button class="tool-row" role="tab" id="tab-tool3" aria-controls="panel-tool3" aria-selected="false" tabindex="-1">
+          <span class="radio" aria-hidden="true"></span>
+          <span class="tool-text">
+            <span class="tool-name">Tool 3 <span class="tool-alt">Soon</span></span>
+            <span class="tool-desc">Coming soon.</span>
+          </span>
+        </button>
+        <button class="tool-row" role="tab" id="tab-tool4" aria-controls="panel-tool4" aria-selected="false" tabindex="-1">
+          <span class="radio" aria-hidden="true"></span>
+          <span class="tool-text">
+            <span class="tool-name">Tool 4 <span class="tool-alt">Soon</span></span>
+            <span class="tool-desc">Coming soon.</span>
+          </span>
+        </button>
+      </div>
+    </aside>
 
-      <div class="row">
-        <div class="row-body">
-          <p class="row-label">Paste an X or Instagram link. Get one that shows the full post, video included, in Discord.</p>
-          <form id="form" autocomplete="off">
-            <label for="link" class="visually-hidden">Post link</label>
-            <input id="link" type="url" inputmode="url" required
-                   placeholder="Paste a link →">
-          </form>
-          <p id="error" class="error" role="alert" hidden></p>
-
-          <div id="result" hidden>
-            <details class="fixed">
-              <summary>Fixed link</summary>
-              <button id="fixed-url" class="copy-link" type="button" title="Click to copy"></button>
-              <span id="copied" class="copied" aria-live="polite"></span>
-            </details>
-
-            <p id="loading" class="muted" hidden></p>
+    <main>
+      <section class="panel" role="tabpanel" id="panel-embed" aria-labelledby="tab-embed">
+        <div class="extractor-controls">
+        <div class="section-head">
+          <span class="section-num">02</span>
+          <div>
+            <h2 class="section-title">Paste Your Link</h2>
+            <p class="section-sub">X/Twitter and Instagram posts</p>
           </div>
         </div>
+        <form id="form" class="field" autocomplete="off">
+          <label for="link" class="visually-hidden">Post link</label>
+          <input id="link" type="url" inputmode="url" required placeholder="https://x.com/… or https://www.instagram.com/…">
+          <p id="error" class="error" role="alert" hidden></p>
+        </form>
+
+        <div id="result" hidden>
+          <div class="section-head">
+            <span class="section-num">03</span>
+            <div>
+              <h2 class="section-title">Your Result</h2>
+              <p class="section-sub">Click the fixed link to copy it</p>
+            </div>
+          </div>
+          <div class="options">
+            <button id="fixed-url" class="option" type="button">
+              <span class="option-title">Fixed link</span>
+              <span id="fixed-url-text" class="option-sub option-link"></span>
+            </button>
+            <div id="downloads" class="options-extra"></div>
+          </div>
+          <p id="loading" class="loading" hidden></p>
+        </div>
+        </div>
         <div id="media" class="media"></div>
-      </div>
-    </section>
+      </section>
 
-    <section class="panel" role="tabpanel" id="panel-tool2" aria-labelledby="tab-tool2" hidden>
-      <div class="panel-head"><span>Tool</span><span>(02)</span></div>
-      <h2 class="panel-title">Tool 2</h2>
-      <div class="row"><p class="row-label">Coming soon.</p></div>
-    </section>
+      <section class="panel" role="tabpanel" id="panel-tool2" aria-labelledby="tab-tool2" hidden>
+        <div class="section-head">
+          <span class="section-num">02</span>
+          <div><h2 class="section-title">Tool 2</h2><p class="section-sub">Coming soon</p></div>
+        </div>
+      </section>
 
-    <section class="panel" role="tabpanel" id="panel-tool3" aria-labelledby="tab-tool3" hidden>
-      <div class="panel-head"><span>Tool</span><span>(03)</span></div>
-      <h2 class="panel-title">Tool 3</h2>
-      <div class="row"><p class="row-label">Coming soon.</p></div>
-    </section>
+      <section class="panel" role="tabpanel" id="panel-tool3" aria-labelledby="tab-tool3" hidden>
+        <div class="section-head">
+          <span class="section-num">02</span>
+          <div><h2 class="section-title">Tool 3</h2><p class="section-sub">Coming soon</p></div>
+        </div>
+      </section>
 
-    <section class="panel" role="tabpanel" id="panel-tool4" aria-labelledby="tab-tool4" hidden>
-      <div class="panel-head"><span>Tool</span><span>(04)</span></div>
-      <h2 class="panel-title">Tool 4</h2>
-      <div class="row"><p class="row-label">Coming soon.</p></div>
-    </section>
-  </main>
+      <section class="panel" role="tabpanel" id="panel-tool4" aria-labelledby="tab-tool4" hidden>
+        <div class="section-head">
+          <span class="section-num">02</span>
+          <div><h2 class="section-title">Tool 4</h2><p class="section-sub">Coming soon</p></div>
+        </div>
+      </section>
+    </main>
+  </div>
 
-  <script src="tabs.js?v=9"></script>
-  <script src="config.js?v=9"></script>
-  <script src="app.js?v=9"></script>
+  <script src="tabs.js?v=12"></script>
+  <script src="config.js?v=12"></script>
+  <script src="app.js?v=12"></script>
 </body>
 </html>
