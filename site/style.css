@@ -230,6 +230,30 @@ input:focus { border-bottom-color: var(--fg); }
 
 .error { margin: 0.6rem 0 0; color: var(--error); font-size: 0.85rem; }
 
+/* Small red notice in Result FC while Media FC has nothing pinned. */
+.warning {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin: 1rem var(--pad) 0;
+  color: var(--error);
+  font-size: 0.85rem;
+}
+
+.warning::before {
+  content: "!";
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 1.1rem;
+  height: 1.1rem;
+  border: 1.5px solid currentColor;
+  border-radius: 50%;
+  font-size: 0.7rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
 .upload-row {
   display: flex;
   align-items: center;

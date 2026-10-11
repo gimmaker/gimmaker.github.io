@@ -75,6 +75,27 @@
       : el("img", { src: url, alt: "" });
   }
 
+  // ---------- "Nothing pinned" warnings ----------
+  // Each tool's Result FC says what it needs while Media FC is empty.
+
+  const WARNINGS = {
+    embed: "Paste a reel or xeet link in Media FC first.",
+    other: "Paste a link or upload a file in Media FC first.",
+  };
+  const warnings = [...document.querySelectorAll('[role="tabpanel"]')].map((panel) => {
+    const name = panel.id.replace("panel-", "");
+    const node = el("p", { className: "warning", role: "status", textContent: WARNINGS[name] || WARNINGS.other });
+    panel.querySelector(".section-head").after(node);
+    return { name, node };
+  });
+
+  function updateWarnings() {
+    for (const { name, node } of warnings) {
+      // Gimmideo FC only works from a link; the other tools take a link or an upload.
+      node.hidden = name === "embed" ? !result.hidden : Boolean(source);
+    }
+  }
+
   // ---------- Preview (in Media FC) ----------
   // Shows the original, or the current tool's result, with a switch between them.
 
@@ -119,6 +140,7 @@
     }
     view = "original";
     renderPreview();
+    updateWarnings();
   }
 
   upload.addEventListener("change", () => {
@@ -144,6 +166,7 @@
     result.hidden = true;
     downloads.replaceChildren();
     downloads.hidden = true;
+    updateWarnings();
   }
 
   function renderDownloads(post, original) {
@@ -197,6 +220,7 @@
     if (!fixed) return resetExtractor();
     store.set(raw);
     result.hidden = false;
+    updateWarnings();
     fixedUrl.textContent = fixed;
     copied.textContent = "";
     loadPost(raw);
@@ -268,6 +292,8 @@
     },
     formatSize,
   };
+
+  updateWarnings();
 
   // Restore a link from ?url=, or the last one used, so it stays pinned.
   const preset = new URLSearchParams(location.search).get("url") || store.get();
