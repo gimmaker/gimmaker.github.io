@@ -1,178 +1,244 @@
-:root {
-  --bg: #f2f3f5;
-  --surface: #ffffff;
-  --text: #2e3338;
-  --muted: #5c6370;
-  --border: #d4d7dc;
-  --accent: #5865f2;
-  --accent-text: #ffffff;
-  --error: #c62828;
-  --code-bg: #e3e5e8;
-}
+/* Editorial black-and-white look: huge condensed serif display type, Helvetica
+   body text, thin rules between rows, text-only navigation. */
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #1e1f22;
-    --surface: #2b2d31;
-    --text: #dbdee1;
-    --muted: #949ba4;
-    --border: #3f4147;
-    --error: #f87171;
-    --code-bg: #383a40;
-  }
+:root {
+  --bg: #ffffff;
+  --ink: #000000;
+  --muted: #6b6b6b;
+  --rule: #000000;
+  --error: #c62828;
+  --display: "Instrument Serif", "Times New Roman", serif;
+  --body: "Helvetica Neue", Helvetica, Arial, system-ui, sans-serif;
+  --gutter: clamp(1rem, 2vw, 1.5rem);
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 * { box-sizing: border-box; }
 
+html { scroll-behavior: smooth; }
+
 body {
   margin: 0;
   background: var(--bg);
-  color: var(--text);
-  font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: var(--ink);
+  font: 15px/1.3 var(--body);
+  -webkit-font-smoothing: antialiased;
 }
 
-main {
-  max-width: 42rem;
-  margin: 0 auto;
-  padding: 2.5rem 1rem 4rem;
+button,
+input { font: inherit; color: inherit; }
+
+button { background: none; border: 0; padding: 0; cursor: pointer; }
+
+a { color: inherit; }
+
+.muted { color: var(--muted); }
+
+/* ---------- Hero ---------- */
+
+.hero {
+  display: flex;
+  flex-direction: column;
+  min-height: 78vh;
+  padding: var(--gutter);
+  background: var(--ink);
+  color: var(--bg);
 }
 
-.site-header {
-  padding: 3rem 1rem 1.5rem;
-  text-align: center;
+.hero-top {
+  display: flex;
+  justify-content: space-between;
+  font-size: clamp(1rem, 1.6vw, 1.6rem);
 }
 
-.brand {
-  font-size: clamp(2.5rem, 9vw, 4rem);
-  font-weight: 800;
-  letter-spacing: -0.04em;
-  line-height: 1;
-  background: linear-gradient(135deg, var(--accent), #eb459e);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+.wordmark {
+  margin: auto 0 0;
+  font: 400 clamp(5rem, 22vw, 22rem) / 0.82 var(--display);
+  letter-spacing: -0.02em;
+  overflow: hidden;
 }
 
-/* Floating, centred pill that stays at the top while scrolling. */
+.wordmark sup {
+  font-family: var(--body);
+  font-size: 0.12em;
+  vertical-align: top;
+  position: relative;
+  top: 0.35em;
+}
+
+.hero-sub {
+  margin: 1rem 0 0;
+  font: 400 clamp(1.5rem, 3.5vw, 3.2rem) / 1.05 var(--display);
+  overflow: hidden;
+}
+
+/* Lines slide up into view on load. */
+.wordmark > span,
+.hero-sub > span {
+  display: inline-block;
+  animation: rise 1.2s var(--ease) both;
+}
+
+.hero-sub > span { animation-delay: 0.15s; }
+
+@keyframes rise {
+  from { transform: translateY(105%); }
+  to { transform: translateY(0); }
+}
+
+/* ---------- Floating tools bar ---------- */
+
+/* Inverts whatever is behind it, so it reads over the black hero and the white page. */
 .toolbar {
   position: sticky;
   top: 1rem;
   z-index: 10;
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  width: fit-content;
-  max-width: calc(100% - 2rem);
-  margin: 0 auto;
-  padding: 0.35rem 0.35rem 0.35rem 1rem;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  justify-content: center;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.9rem;
+  margin: 2rem auto 0;
+  padding: 0 var(--gutter);
+  color: #ffffff;
+  mix-blend-mode: difference;
+  font-size: clamp(1.1rem, 1.8vw, 1.6rem);
+  pointer-events: none;
 }
 
-.toolbar-label {
-  font-size: 0.7rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--muted);
-}
+.toolbar-label { font-size: 0.6em; }
 
 .tabs {
   display: flex;
-  gap: 0.25rem;
-  overflow-x: auto;
-  scrollbar-width: none;
+  flex-wrap: wrap;
+  justify-content: center;
+  pointer-events: auto;
 }
 
 .tab {
-  padding: 0.5rem 0.9rem;
-  border-radius: 999px;
-  background: none;
-  color: var(--muted);
-  font-weight: 500;
+  position: relative;
+  color: #ffffff;
 }
 
-.tab:hover { color: var(--text); background: var(--code-bg); filter: none; }
+/* Comma-separated, like a sentence: "Gimmick Extractor, Tool 2, Tool 3". */
+.tab:not(:last-child)::after { content: ","; margin-right: 0.3em; }
 
-.tab[aria-selected="true"] {
-  color: var(--accent-text);
-  background: var(--accent);
+.tab::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0.3em;
+  bottom: -0.05em;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.5s var(--ease);
 }
 
-.tagline { margin: 0.5rem 0 2rem; color: var(--muted); }
-.muted { color: var(--muted); }
+.tab:last-child::before { right: 0; }
 
-code {
-  background: var(--code-bg);
-  padding: 0.1em 0.35em;
-  border-radius: 4px;
-  font-size: 0.9em;
+.tab:hover::before,
+.tab[aria-selected="true"]::before {
+  transform: scaleX(1);
+  transform-origin: left;
 }
 
-form { display: flex; gap: 0.5rem; }
+.tab:focus-visible { outline: 1px dashed #ffffff; outline-offset: 4px; }
+
+/* ---------- Tool panels ---------- */
+
+main { padding: clamp(4rem, 10vw, 8rem) var(--gutter) 4rem; }
+
+.panel-head {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+.panel-title {
+  margin: 0;
+  padding: 0.1em 0 0.05em;
+  border-bottom: 1px solid var(--rule);
+  font: 400 clamp(3.2rem, 11vw, 10rem) / 0.95 var(--display);
+  text-align: center;
+  letter-spacing: -0.01em;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--gutter);
+  padding-top: 1rem;
+}
+
+.row-label {
+  margin: 0;
+  max-width: 22rem;
+}
+
+.row-body { min-width: 0; }
 
 input {
-  flex: 1;
-  min-width: 0;
-  padding: 0.75rem 0.9rem;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: var(--surface);
-  color: var(--text);
-  font: inherit;
-}
-
-input:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
-
-button {
-  padding: 0.75rem 1.1rem;
+  width: 100%;
+  padding: 0 0 0.35rem;
   border: 0;
-  border-radius: 8px;
-  background: var(--accent);
-  color: var(--accent-text);
-  font: inherit;
-  font-weight: 600;
-  cursor: pointer;
-  white-space: nowrap;
+  border-bottom: 1px solid var(--rule);
+  border-radius: 0;
+  background: none;
+  font-size: clamp(1.4rem, 2.4vw, 2rem);
+  outline: none;
 }
 
-button:hover { filter: brightness(1.1); }
+input::placeholder { color: var(--muted); }
+input:focus { border-bottom-width: 2px; padding-bottom: calc(0.35rem - 1px); }
 
-.error { color: var(--error); margin: 0.75rem 0 0; }
+.error { margin: 0.6rem 0 0; color: var(--error); }
 
-.fixed { margin-top: 0.75rem; font-size: 0.9rem; }
+/* Fixed-link toggle: a ruled row with an arrow that turns when opened. */
+.fixed { border-bottom: 1px solid var(--rule); }
 
 .fixed summary {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.7rem 0 0.4rem;
   cursor: pointer;
-  color: var(--muted);
-  width: fit-content;
+  list-style: none;
   user-select: none;
 }
 
-.fixed summary:hover { color: var(--text); }
+.fixed summary::-webkit-details-marker { display: none; }
+
+.fixed summary::after {
+  content: "→";
+  transition: transform 0.4s var(--ease);
+}
+
+.fixed[open] summary::after { transform: rotate(90deg); }
 
 .copy-link {
   display: inline;
-  margin: 0.4rem 0.5rem 0 1.1rem;
-  padding: 0;
-  background: none;
-  color: var(--accent);
+  margin: 0 0.5rem 0.7rem 0;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-weight: 400;
-  font-size: inherit;
+  font-size: 0.85rem;
   text-align: left;
   overflow-wrap: anywhere;
-  white-space: normal;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  text-decoration-thickness: 1px;
 }
 
-.copy-link:hover { text-decoration: underline; filter: none; }
+.copy-link:hover { text-decoration-thickness: 2px; }
+
+.copied { color: var(--muted); font-size: 0.85rem; }
+
+#loading { margin: 1rem 0 0; }
 
 .media {
   display: grid;
-  gap: 0.75rem;
-  margin-top: 1rem;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
 }
 
 .media:empty { display: none; }
@@ -184,27 +250,42 @@ button:hover { filter: brightness(1.1); }
 .media video {
   display: block;
   width: 100%;
-  max-height: 32rem;
+  max-height: 34rem;
   object-fit: contain;
-  background: #000;
-  border-radius: 8px;
+  background: var(--ink);
 }
 
 .download {
-  display: inline-block;
-  margin-top: 0.6rem;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  background: var(--accent);
-  color: var(--accent-text);
-  font-weight: 600;
-  font-size: 0.9rem;
+  display: flex;
+  justify-content: space-between;
+  padding: 0.7rem 0 0.4rem;
+  border-bottom: 1px solid var(--rule);
   text-decoration: none;
 }
 
-.download:hover { filter: brightness(1.1); }
+.download::after { content: "↓"; transition: transform 0.4s var(--ease); }
+.download:hover::after { transform: translateY(0.2em); }
 
-#loading { margin: 1rem 0 0; }
+/* ---------- Footer ---------- */
+
+.footer { padding: 0 var(--gutter) var(--gutter); }
+
+.footer-big {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  border-bottom: 1px solid var(--rule);
+  font: 400 clamp(3rem, 9vw, 8rem) / 1 var(--display);
+}
+
+.footer-cols {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 0.5rem;
+}
+
+.footer a { text-decoration: none; }
+.footer a:hover { text-decoration: underline; text-underline-offset: 0.2em; }
 
 .visually-hidden {
   position: absolute;
@@ -214,9 +295,15 @@ button:hover { filter: brightness(1.1); }
   clip: rect(0 0 0 0);
 }
 
-@media (max-width: 30rem) {
-  form { flex-direction: column; }
-  main { padding-top: 2rem; }
-  .toolbar-label { display: none; }
-  .toolbar { padding-left: 0.35rem; }
+@media (max-width: 40rem) {
+  .hero { min-height: 62vh; }
+  .row { grid-template-columns: 1fr; }
+  .media.multi { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *,
+  *::before,
+  *::after { animation: none !important; transition: none !important; }
 }

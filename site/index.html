@@ -6,20 +6,28 @@
   <!-- X and Instagram's media servers reject requests that carry our site as the referrer. -->
   <meta name="referrer" content="no-referrer">
   <title>gimmaker</title>
-  <meta name="description" content="Fix X/Twitter and Instagram link previews in Discord.">
+  <meta name="description" content="Small tools for links, posts and media.">
   <meta property="og:title" content="gimmaker">
-  <meta property="og:description" content="Fix X/Twitter and Instagram link previews in Discord.">
-  <meta name="theme-color" content="#5865f2">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔗</text></svg>">
-  <link rel="stylesheet" href="style.css?v=5">
+  <meta property="og:description" content="Small tools for links, posts and media.">
+  <meta name="theme-color" content="#000000">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✳️</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap">
+  <link rel="stylesheet" href="style.css?v=6">
 </head>
 <body>
-  <header class="site-header">
-    <div class="brand">gimmaker</div>
+  <header class="hero">
+    <div class="hero-top">
+      <span>gimmaker®</span>
+      <span>©2026</span>
+    </div>
+    <h1 class="wordmark"><span>gimmaker<sup>®</sup></span></h1>
+    <p class="hero-sub"><span>Small tools for links, posts &amp; media✳</span></p>
   </header>
 
   <nav class="toolbar" aria-label="Tools">
-    <span class="toolbar-label">Tools</span>
+    <span class="toolbar-label">(Tools)</span>
     <div class="tabs" role="tablist">
       <button class="tab" role="tab" id="tab-embed" aria-controls="panel-embed" aria-selected="true">Gimmick Extractor</button>
       <button class="tab" role="tab" id="tab-tool2" aria-controls="panel-tool2" aria-selected="false" tabindex="-1">Tool 2</button>
@@ -30,46 +38,68 @@
 
   <main>
     <section class="panel" role="tabpanel" id="panel-embed" aria-labelledby="tab-embed">
-      <h1>Gimmick Extractor</h1>
-      <p class="tagline">Paste an X or Instagram link. Get one that shows the full post, video included, when you send it in Discord.</p>
+      <div class="panel-head">
+        <span>Tool</span>
+        <span>(01)</span>
+      </div>
+      <h2 class="panel-title">Gimmick Extractor</h2>
 
-      <form id="form" autocomplete="off">
-        <label for="link" class="visually-hidden">Post link</label>
-        <input id="link" type="url" inputmode="url" required
-               placeholder="https://x.com/user/status/123 or https://www.instagram.com/reel/ABC/">
-      </form>
-      <p id="error" class="error" role="alert" hidden></p>
+      <div class="row">
+        <p class="row-label">Paste an X or Instagram link. Get one that shows the full post, video included, in Discord.</p>
+        <div class="row-body">
+          <form id="form" autocomplete="off">
+            <label for="link" class="visually-hidden">Post link</label>
+            <input id="link" type="url" inputmode="url" required
+                   placeholder="Paste a link →">
+          </form>
+          <p id="error" class="error" role="alert" hidden></p>
 
-      <div id="result" hidden>
-        <details class="fixed">
-          <summary>Fixed link</summary>
-          <button id="fixed-url" class="copy-link" type="button" title="Click to copy"></button>
-          <span id="copied" class="muted" aria-live="polite"></span>
-        </details>
+          <div id="result" hidden>
+            <details class="fixed">
+              <summary>Fixed link</summary>
+              <button id="fixed-url" class="copy-link" type="button" title="Click to copy"></button>
+              <span id="copied" class="copied" aria-live="polite"></span>
+            </details>
 
-        <p id="loading" class="muted" hidden></p>
-        <div id="media" class="media"></div>
+            <p id="loading" class="muted" hidden></p>
+            <div id="media" class="media"></div>
+          </div>
+        </div>
       </div>
     </section>
 
     <section class="panel" role="tabpanel" id="panel-tool2" aria-labelledby="tab-tool2" hidden>
-      <h1>Tool 2</h1>
-      <p class="tagline">Coming soon.</p>
+      <div class="panel-head"><span>Tool</span><span>(02)</span></div>
+      <h2 class="panel-title">Tool 2</h2>
+      <div class="row"><p class="row-label">Coming soon.</p></div>
     </section>
 
     <section class="panel" role="tabpanel" id="panel-tool3" aria-labelledby="tab-tool3" hidden>
-      <h1>Tool 3</h1>
-      <p class="tagline">Coming soon.</p>
+      <div class="panel-head"><span>Tool</span><span>(03)</span></div>
+      <h2 class="panel-title">Tool 3</h2>
+      <div class="row"><p class="row-label">Coming soon.</p></div>
     </section>
 
     <section class="panel" role="tabpanel" id="panel-tool4" aria-labelledby="tab-tool4" hidden>
-      <h1>Tool 4</h1>
-      <p class="tagline">Coming soon.</p>
+      <div class="panel-head"><span>Tool</span><span>(04)</span></div>
+      <h2 class="panel-title">Tool 4</h2>
+      <div class="row"><p class="row-label">Coming soon.</p></div>
     </section>
   </main>
 
-  <script src="tabs.js?v=5"></script>
-  <script src="config.js?v=5"></script>
-  <script src="app.js?v=5"></script>
+  <footer class="footer">
+    <div class="footer-big">
+      <span>gimmaker</span>
+      <span>(04)</span>
+    </div>
+    <div class="footer-cols">
+      <span>©2026</span>
+      <a href="https://github.com/gimmaker/gimmaker.github.io">GitHub →</a>
+    </div>
+  </footer>
+
+  <script src="tabs.js?v=6"></script>
+  <script src="config.js?v=6"></script>
+  <script src="app.js?v=6"></script>
 </body>
 </html>
