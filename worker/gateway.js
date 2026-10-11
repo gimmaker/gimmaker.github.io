@@ -20,6 +20,22 @@ const FRY_LEVELS = ["mild", "crispy", "nuclear"];
 const GIF_SIZES = { small: "320", medium: "480", large: "640", 320: "320", 480: "480", 640: "640" };
 const AUDIO_MODES = ["replace", "remove", "extract"];
 
+// Command names people are likely to type, mapped to the real ones.
+const ALIASES = {
+  help: "help", h: "help", commands: "help", cmds: "help",
+  gimmideo: "gimmideo", gimmick: "gimmideo", embed: "gimmideo", fix: "gimmideo", dl: "gimmideo", download: "gimmideo",
+  gimmaudio: "gimmaudio", audio: "gimmaudio", sound: "gimmaudio",
+  deepfry: "deepfry", fry: "deepfry", df: "deepfry",
+  caption: "caption", cap: "caption",
+  gif: "gif",
+};
+
+// "deepfry", "deepfryfc", "Deepfry FC" (the "fc" is dropped later) all match.
+function resolveCommand(word) {
+  const w = word.toLowerCase().replace(/[^a-z]/g, "").replace(/fc$/, "");
+  return ALIASES[w] || null;
+}
+
 export function prefixes(env) {
   // Longest first, so "?gmq" isn't mistaken for "?g" + "mq".
   return (env.BOT_PREFIXES || "gm6")
@@ -32,7 +48,7 @@ export function prefixes(env) {
 function helpText(prefix) {
   return [
     "**gimmaker** — paste a reel or xeet link and I'll fix the embed automatically. Commands:",
-    `\`${prefix} gimmideo <link>\` — fixed link + download`,
+    `\`${prefix} gimmideo <link>\` (or just \`${prefix} <link>\`) — fixed link + download`,
     `\`${prefix} gimmaudio replace|remove|extract\` — attach a video (and the new sound for replace)`,
     `\`${prefix} deepfry [mild|crispy|nuclear]\``,
     `\`${prefix} caption <text>\``,
@@ -52,11 +68,17 @@ export function planMessage(msg, { base, prefixList }) {
   const prefix = prefixList.find((p) => lower.startsWith(p));
   if (prefix) {
     const after = content.slice(prefix.length);
-    const [command, ...words] = after.trim().split(/\s+/);
+    let [command = "", ...words] = after.trim().split(/\s+/).filter(Boolean);
+    // "?g <link>" on its own means gimmideo.
+    if (/^<?https?:\/\//i.test(command)) {
+      words.unshift(command);
+      command = "gimmideo";
+    }
+    if (words[0]?.toLowerCase() === "fc") words.shift();
     return {
       kind: "command",
       prefix,
-      command: command ? command.toLowerCase() : "help",
+      command: command ? resolveCommand(command) || command.toLowerCase() : "help",
       rest: words.join(" "),
       // "?g dance" was meant for the bot; "?good" probably wasn't.
       spaced: !after || /^\s/.test(after),
@@ -97,7 +119,9 @@ export async function commandReply(plan, msg, base) {
     if (!link) return { content: `⚠️ Add a reel or xeet link, or reply to a message that has one.` };
     return gimmideoMessage(link, base);
   }
-  if (!TOOL_NAMES[command]) return plan.spaced ? { content: `⚠️ Unknown command. Try \`${prefix} help\`.` } : null;
+  if (!TOOL_NAMES[command]) {
+    return plan.spaced ? { content: `⚠️ I don't know \`${command}\`. Here's what I can do:\n\n${helpText(prefix)}` } : null;
+  }
 
   const options = { tool: command, media, link, audio };
   if (command === "gimmaudio") options.mode = words.find((w) => AUDIO_MODES.includes(w));
