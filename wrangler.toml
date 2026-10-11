@@ -6,3 +6,8 @@ compatibility_date = "2026-09-01"
 # so the worker's own address doubles as the tool's homepage.
 [assets]
 directory = "./site"
+
+# Discord bot (public values; the bot token is never stored here).
+[vars]
+DISCORD_APPLICATION_ID = "1558780667221778495"
+DISCORD_PUBLIC_KEY = "2047f5c9fcd82a6ece5456460b18aae64d468298311aeda4144ad86697bc158b"
