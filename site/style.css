@@ -6,7 +6,6 @@
   --border: #d4d7dc;
   --accent: #5865f2;
   --accent-text: #ffffff;
-  --card: #f2f3f5;
   --error: #c62828;
   --code-bg: #e3e5e8;
 }
@@ -18,7 +17,6 @@
     --text: #dbdee1;
     --muted: #949ba4;
     --border: #3f4147;
-    --card: #2b2d31;
     --error: #f87171;
     --code-bg: #383a40;
   }
@@ -45,17 +43,8 @@ h1 {
   letter-spacing: -0.02em;
 }
 
-h2 {
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--muted);
-  margin: 2rem 0 0.75rem;
-}
-
 .tagline { margin: 0.5rem 0 2rem; color: var(--muted); }
 .muted { color: var(--muted); }
-a { color: var(--accent); }
 
 code {
   background: var(--code-bg);
@@ -116,42 +105,27 @@ button:hover { filter: brightness(1.1); }
 
 .fixed button { padding: 0.5rem 0.9rem; }
 
-/* Discord-style embed preview */
-.card {
-  max-width: 32rem;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-left: 4px solid var(--card-color, var(--accent));
-  border-radius: 4px;
-  padding: 0.6rem 1rem 1rem 0.75rem;
-  font-size: 0.875rem;
-}
-
-.provider { font-size: 0.75rem; color: var(--muted); }
-.stats { font-weight: 600; margin-top: 0.25rem; }
-.card-title { font-weight: 600; color: var(--accent); margin-top: 0.25rem; }
-.card-text { margin: 0.5rem 0 0; white-space: pre-wrap; overflow-wrap: anywhere; }
-
-.card-media {
+.media {
   display: grid;
   gap: 4px;
-  margin-top: 0.75rem;
-  border-radius: 4px;
+  margin-top: 1rem;
+  border-radius: 8px;
   overflow: hidden;
 }
 
-.card-media.multi { grid-template-columns: 1fr 1fr; }
+.media:empty { display: none; }
+.media.multi { grid-template-columns: 1fr 1fr; }
 
-.card-media img,
-.card-media video {
+.media img,
+.media video {
   display: block;
   width: 100%;
-  max-height: 22rem;
-  object-fit: cover;
+  max-height: 32rem;
+  object-fit: contain;
   background: #000;
 }
 
-.how p { margin: 0 0 0.75rem; }
+#loading { margin: 1rem 0 0; }
 
 .visually-hidden {
   position: absolute;
