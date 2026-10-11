@@ -153,6 +153,34 @@ main { min-width: 0; }
   font-size: 0.85rem;
 }
 
+/* ---------- Tool FC toggle ---------- */
+
+.list-head { position: relative; transition: background-color 0.2s; }
+.list-head:hover { background: var(--row-hover); }
+.list-head .section-title { flex: 1; }
+
+.list-toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  width: 100%;
+  font: inherit;
+}
+
+/* The whole heading row is clickable. */
+.list-toggle::after { content: ""; position: absolute; inset: 0; }
+
+.list-toggle .arrow {
+  color: var(--faint);
+  font: 400 1rem/1 var(--sans);
+  transform: rotate(90deg);
+}
+
+.list-toggle[aria-expanded="false"] .arrow { transform: none; }
+.list-toggle:focus-visible { outline: 1px solid var(--fg); outline-offset: 4px; }
+
+.tool-list.collapsed .tool-row:not([aria-selected="true"]) { display: none; }
+
 /* ---------- Radio-style tool rows ---------- */
 
 .tool-row {

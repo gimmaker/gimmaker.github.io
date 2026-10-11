@@ -14,7 +14,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Montserrat:wght@400;500;600;800&display=swap">
-  <link rel="stylesheet" href="style.css?v=31">
+  <link rel="stylesheet" href="style.css?v=33">
 </head>
 <body>
   <section class="hero">
@@ -64,11 +64,15 @@
 
   <div class="layout" id="layout">
     <aside class="tool-list">
-      <div class="section-head">
+      <div class="section-head list-head">
         <span class="section-num">02</span>
-        <div><h2 class="section-title">Tool FC</h2></div>
+        <h2 class="section-title">
+          <button id="tool-toggle" class="list-toggle" type="button" aria-expanded="true" aria-controls="tool-tabs">
+            Tool FC <span class="arrow" aria-hidden="true">→</span>
+          </button>
+        </h2>
       </div>
-      <div role="tablist" aria-label="Tools" aria-orientation="vertical">
+      <div id="tool-tabs" role="tablist" aria-label="Tools" aria-orientation="vertical">
         <button class="tool-row" role="tab" id="tab-embed" aria-controls="panel-embed" aria-selected="true">
           <span class="radio" aria-hidden="true"></span>
           <span class="tool-text">
@@ -216,9 +220,9 @@
     <span>made by <a href="https://github.com/qaysarstellar">qaysarstellar</a></span>
   </footer>
 
-  <script src="tabs.js?v=31"></script>
-  <script src="config.js?v=31"></script>
-  <script src="app.js?v=31"></script>
-  <script type="module" src="tools.js?v=31"></script>
+  <script src="tabs.js?v=33"></script>
+  <script src="config.js?v=33"></script>
+  <script src="app.js?v=33"></script>
+  <script type="module" src="tools.js?v=33"></script>
 </body>
 </html>
