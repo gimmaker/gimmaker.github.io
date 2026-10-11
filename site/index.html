@@ -11,35 +11,65 @@
   <meta property="og:description" content="Fix X/Twitter and Instagram link previews in Discord.">
   <meta name="theme-color" content="#5865f2">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔗</text></svg>">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=3">
 </head>
 <body>
+  <header class="site-header">
+    <div class="brand">gimmaker</div>
+  </header>
+
+  <nav class="toolbar" aria-label="Tools">
+    <span class="toolbar-label">Tools</span>
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" id="tab-embed" aria-controls="panel-embed" aria-selected="true">Embed Fixer</button>
+      <button class="tab" role="tab" id="tab-tool2" aria-controls="panel-tool2" aria-selected="false" tabindex="-1">Tool 2</button>
+      <button class="tab" role="tab" id="tab-tool3" aria-controls="panel-tool3" aria-selected="false" tabindex="-1">Tool 3</button>
+      <button class="tab" role="tab" id="tab-tool4" aria-controls="panel-tool4" aria-selected="false" tabindex="-1">Tool 4</button>
+    </div>
+  </nav>
+
   <main>
-    <header>
-      <h1>gimmaker</h1>
+    <section class="panel" role="tabpanel" id="panel-embed" aria-labelledby="tab-embed">
+      <h1>Embed Fixer</h1>
       <p class="tagline">Paste an X or Instagram link. Get one that shows the full post, video included, when you send it in Discord.</p>
-    </header>
 
-    <form id="form" autocomplete="off">
-      <label for="link" class="visually-hidden">Post link</label>
-      <input id="link" type="url" inputmode="url" required
-             placeholder="https://x.com/user/status/123 or https://www.instagram.com/reel/ABC/">
-      <button type="submit">Fix link</button>
-    </form>
-    <p id="error" class="error" role="alert" hidden></p>
+      <form id="form" autocomplete="off">
+        <label for="link" class="visually-hidden">Post link</label>
+        <input id="link" type="url" inputmode="url" required
+               placeholder="https://x.com/user/status/123 or https://www.instagram.com/reel/ABC/">
+        <button type="submit">Fix link</button>
+      </form>
+      <p id="error" class="error" role="alert" hidden></p>
 
-    <section id="result" hidden>
-      <div class="fixed">
-        <code id="fixed-url"></code>
-        <button id="copy" type="button">Copy</button>
+      <div id="result" hidden>
+        <div class="fixed">
+          <code id="fixed-url"></code>
+          <button id="copy" type="button">Copy</button>
+        </div>
+
+        <p id="loading" class="muted" hidden></p>
+        <div id="media" class="media"></div>
       </div>
+    </section>
 
-      <p id="loading" class="muted" hidden></p>
-      <div id="media" class="media"></div>
+    <section class="panel" role="tabpanel" id="panel-tool2" aria-labelledby="tab-tool2" hidden>
+      <h1>Tool 2</h1>
+      <p class="tagline">Coming soon.</p>
+    </section>
+
+    <section class="panel" role="tabpanel" id="panel-tool3" aria-labelledby="tab-tool3" hidden>
+      <h1>Tool 3</h1>
+      <p class="tagline">Coming soon.</p>
+    </section>
+
+    <section class="panel" role="tabpanel" id="panel-tool4" aria-labelledby="tab-tool4" hidden>
+      <h1>Tool 4</h1>
+      <p class="tagline">Coming soon.</p>
     </section>
   </main>
 
-  <script src="config.js"></script>
-  <script src="app.js"></script>
+  <script src="tabs.js?v=3"></script>
+  <script src="config.js?v=3"></script>
+  <script src="app.js?v=3"></script>
 </body>
 </html>
