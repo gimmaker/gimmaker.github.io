@@ -54,6 +54,7 @@ a { color: inherit; text-decoration: none; }
 .hero-title {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.18em;
   margin: 0;
   font: 400 clamp(2.6rem, 6.5vw, 5.5rem) / 0.85 var(--display);
