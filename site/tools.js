@@ -1,4 +1,4 @@
-// Replace Audio, Deepfry, Caption and Convert to GIF. Everything runs in the
+// Gimmaudio FC, Deepfry FC, Caption FC and GIF FC. Everything runs in the
 // browser with ffmpeg.wasm (FFmpeg compiled to WebAssembly), so files never
 // leave the visitor's computer. The ~30 MB engine loads on first use.
 
@@ -190,6 +190,10 @@ const TOOLS = {
   },
 
   async gif({ kind, input }) {
+    // A GIF goes the other way: it becomes an MP4.
+    if (kind === "gif") {
+      return { output: "out.mp4", attempts: [["-i", input, "-movflags", "+faststart", "-vf", even, ...x264, "-crf", "23", "-an", "out.mp4"]] };
+    }
     // Size is the longest side, so tall videos don't balloon.
     const side = Number(choice("gif") || 480);
     const fit = `scale='min(${side},iw)':'min(${side},ih)':force_original_aspect_ratio=decrease:flags=lanczos`;
@@ -199,7 +203,7 @@ const TOOLS = {
   },
 };
 
-const OUTPUT_LABEL = { audio: "audio-replaced", fry: "deepfried", caption: "captioned", gif: "gif" };
+const OUTPUT_LABEL = { audio: "gimmaudio-fc", fry: "deepfry-fc", caption: "caption-fc", gif: "gif-fc" };
 
 // ---------- Wiring ----------
 
@@ -216,8 +220,20 @@ audioFile.addEventListener("change", () => {
   document.getElementById("audio-name").textContent = audioFile.files[0]?.name || "MP3, M4A, WAV or a video";
 });
 
+// GIF FC flips direction depending on the pinned media.
+function updateGifPanel() {
+  const fromGif = g.sourceKind() === "gif";
+  document.getElementById("gif-sizes").hidden = fromGif;
+  document.getElementById("gif-run-label").textContent = fromGif ? "Convert to video" : "Convert to GIF";
+  document.getElementById("gif-sub").textContent = fromGif
+    ? "Your GIF becomes an MP4 video"
+    : "Convert to a GIF (first 15 seconds, size is the longest side), or upload a GIF to make it a video";
+}
+updateGifPanel();
+
 // A new source makes old results stale.
 document.addEventListener("sourcechange", () => {
+  updateGifPanel();
   for (const panel of document.querySelectorAll(".tool-body")) {
     panel.querySelector(".tool-status").textContent = "";
     const result = panel.querySelector(".tool-result");

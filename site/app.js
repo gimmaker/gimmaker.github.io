@@ -1,4 +1,4 @@
-// Pinned media (link or upload), the Gimmideo Extracter, and the preview column.
+// Pinned media (link or upload), Gimmideo FC, and the preview column.
 // Exposes window.gimmaker so tools.js can read the media and show results.
 (() => {
   const WORKER = (window.GIMMAKER_WORKER_URL || location.origin).replace(/\/$/, "");
@@ -138,7 +138,7 @@
     setSource(null);
   });
 
-  // ---------- Gimmideo Extracter ----------
+  // ---------- Gimmideo FC ----------
 
   function resetExtractor() {
     result.hidden = true;

@@ -14,7 +14,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Montserrat:wght@400;500;600;800&display=swap">
-  <link rel="stylesheet" href="style.css?v=15">
+  <link rel="stylesheet" href="style.css?v=16">
 </head>
 <body>
   <section class="hero">
@@ -25,42 +25,42 @@
     <aside class="tool-list">
       <div class="section-head">
         <span class="section-num">01</span>
-        <div><h2 class="section-title">Choose Your Tool</h2></div>
+        <div><h2 class="section-title">Tool FC</h2></div>
       </div>
       <div role="tablist" aria-label="Tools" aria-orientation="vertical">
         <button class="tool-row" role="tab" id="tab-embed" aria-controls="panel-embed" aria-selected="true">
           <span class="radio" aria-hidden="true"></span>
           <span class="tool-text">
-            <span class="tool-name">Gimmideo Extracter <span class="tool-alt">X · Instagram</span></span>
-            <span class="tool-desc">Fixed links for Discord, plus the video to download.</span>
+            <span class="tool-name">Gimmideo FC</span>
+            <span class="tool-desc">Download reels and xeets.</span>
           </span>
         </button>
         <button class="tool-row" role="tab" id="tab-audio" aria-controls="panel-audio" aria-selected="false" tabindex="-1">
           <span class="radio" aria-hidden="true"></span>
           <span class="tool-text">
-            <span class="tool-name">Replace Audio <span class="tool-alt">Sound</span></span>
-            <span class="tool-desc">Swap the sound on a video, GIF or photo.</span>
+            <span class="tool-name">Gimmaudio FC</span>
+            <span class="tool-desc">Replace the audio of a video, or add audio to an image.</span>
           </span>
         </button>
         <button class="tool-row" role="tab" id="tab-fry" aria-controls="panel-fry" aria-selected="false" tabindex="-1">
           <span class="radio" aria-hidden="true"></span>
           <span class="tool-text">
-            <span class="tool-name">Deepfry <span class="tool-alt">Crispy</span></span>
-            <span class="tool-desc">Crush it into oversaturated, low-quality mush.</span>
+            <span class="tool-name">Deepfry FC</span>
+            <span class="tool-desc">Deepfry a video, image or GIF.</span>
           </span>
         </button>
         <button class="tool-row" role="tab" id="tab-caption" aria-controls="panel-caption" aria-selected="false" tabindex="-1">
           <span class="radio" aria-hidden="true"></span>
           <span class="tool-text">
-            <span class="tool-name">Caption <span class="tool-alt">Text</span></span>
-            <span class="tool-desc">Add a meme-style caption bar on top.</span>
+            <span class="tool-name">Caption FC</span>
+            <span class="tool-desc">Add a caption to a video, image or GIF.</span>
           </span>
         </button>
         <button class="tool-row" role="tab" id="tab-gif" aria-controls="panel-gif" aria-selected="false" tabindex="-1">
           <span class="radio" aria-hidden="true"></span>
           <span class="tool-text">
-            <span class="tool-name">Convert to GIF <span class="tool-alt">Loop</span></span>
-            <span class="tool-desc">Turn a video into a looping GIF.</span>
+            <span class="tool-name">GIF FC</span>
+            <span class="tool-desc">Convert to a GIF, or convert a GIF to a video.</span>
           </span>
         </button>
       </div>
@@ -78,7 +78,7 @@
         </div>
         <form id="form" class="field" autocomplete="off">
           <label for="link" class="visually-hidden">Post link</label>
-          <input id="link" type="url" inputmode="url" placeholder="Paste an X or Instagram link">
+          <input id="link" type="url" inputmode="url" placeholder="Paste a reel or xeet link">
           <p id="error" class="error" role="alert" hidden></p>
           <div id="upload-row" class="upload-row" hidden>
             <span class="or">or</span>
@@ -98,11 +98,11 @@
         <div class="section-head">
           <span class="section-num">03</span>
           <div>
-            <h2 class="section-title">Gimmideo Extracter</h2>
-            <p class="section-sub">Fixed link for Discord, plus downloads</p>
+            <h2 class="section-title">Gimmideo FC</h2>
+            <p class="section-sub">Download reels and xeets, or grab a fixed link for Discord</p>
           </div>
         </div>
-        <p id="extract-empty" class="hint">Paste an X or Instagram link above.</p>
+        <p id="extract-empty" class="hint">Paste a reel or xeet link above.</p>
         <div id="result" hidden>
           <details class="fixed">
             <summary>Fixed link <span class="arrow">→</span></summary>
@@ -118,8 +118,8 @@
         <div class="section-head">
           <span class="section-num">03</span>
           <div>
-            <h2 class="section-title">Replace Audio</h2>
-            <p class="section-sub">Pick the new sound: an audio file, or a video to take it from</p>
+            <h2 class="section-title">Gimmaudio FC</h2>
+            <p class="section-sub">Replace the audio of a video, or add audio to an image</p>
           </div>
         </div>
         <div class="tool-body">
@@ -128,7 +128,7 @@
             <span class="pick-title">Choose audio</span>
             <span id="audio-name" class="pick-sub">MP3, M4A, WAV or a video</span>
           </label>
-          <button class="run" type="button" data-tool="audio">Replace audio <span class="arrow">→</span></button>
+          <button class="run" type="button" data-tool="audio">Gimmaudio <span class="arrow">→</span></button>
           <p class="tool-status" aria-live="polite"></p>
           <div class="tool-result options" hidden></div>
         </div>
@@ -138,8 +138,8 @@
         <div class="section-head">
           <span class="section-num">03</span>
           <div>
-            <h2 class="section-title">Deepfry</h2>
-            <p class="section-sub">Oversaturated, crunchy, low quality</p>
+            <h2 class="section-title">Deepfry FC</h2>
+            <p class="section-sub">Deepfry a video, image or GIF</p>
           </div>
         </div>
         <div class="tool-body">
@@ -158,14 +158,14 @@
         <div class="section-head">
           <span class="section-num">03</span>
           <div>
-            <h2 class="section-title">Caption</h2>
-            <p class="section-sub">White bar with your text on top</p>
+            <h2 class="section-title">Caption FC</h2>
+            <p class="section-sub">Add a caption to a video, image or GIF</p>
           </div>
         </div>
         <div class="tool-body">
           <label for="caption-text" class="visually-hidden">Caption text</label>
           <input id="caption-text" type="text" placeholder="Type your caption" maxlength="200">
-          <button class="run" type="button" data-tool="caption">Add caption <span class="arrow">→</span></button>
+          <button class="run" type="button" data-tool="caption">Caption <span class="arrow">→</span></button>
           <p class="tool-status" aria-live="polite"></p>
           <div class="tool-result options" hidden></div>
         </div>
@@ -175,17 +175,17 @@
         <div class="section-head">
           <span class="section-num">03</span>
           <div>
-            <h2 class="section-title">Convert to GIF</h2>
-            <p class="section-sub">Uses the first 15 seconds · size is the longest side</p>
+            <h2 class="section-title">GIF FC</h2>
+            <p class="section-sub" id="gif-sub">Convert to a GIF, or convert a GIF to a video</p>
           </div>
         </div>
         <div class="tool-body">
-          <div class="options choices" data-choice="gif">
+          <div class="options choices" data-choice="gif" id="gif-sizes">
             <button class="option" type="button" data-value="320" aria-pressed="false"><span class="option-title">Small</span><span class="option-sub">320 px</span></button>
             <button class="option" type="button" data-value="480" aria-pressed="true"><span class="option-title">Medium</span><span class="option-sub">480 px</span></button>
             <button class="option" type="button" data-value="640" aria-pressed="false"><span class="option-title">Large</span><span class="option-sub">640 px</span></button>
           </div>
-          <button class="run" type="button" data-tool="gif">Convert <span class="arrow">→</span></button>
+          <button class="run" type="button" data-tool="gif"><span id="gif-run-label">Convert to GIF</span> <span class="arrow">→</span></button>
           <p class="tool-status" aria-live="polite"></p>
           <div class="tool-result options" hidden></div>
         </div>
@@ -202,9 +202,9 @@
     </aside>
   </div>
 
-  <script src="tabs.js?v=15"></script>
-  <script src="config.js?v=15"></script>
-  <script src="app.js?v=15"></script>
-  <script type="module" src="tools.js?v=15"></script>
+  <script src="tabs.js?v=16"></script>
+  <script src="config.js?v=16"></script>
+  <script src="app.js?v=16"></script>
+  <script type="module" src="tools.js?v=16"></script>
 </body>
 </html>
