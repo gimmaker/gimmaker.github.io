@@ -15,6 +15,14 @@ const WATCHDOG_MS = 30_000;
 const FATAL_CLOSES = { 4004: "The bot token is wrong.", 4013: "Invalid intents.", 4014: "Turn on Message Content Intent in the Developer Portal." };
 const FATAL_RETRY_MS = 10 * 60_000;
 
+// Shown under the bot's name: "Watching reels & xeets · ?help".
+const PRESENCE = {
+  since: null,
+  activities: [{ name: "reels & xeets · ?help", type: 3 }], // 3 = Watching
+  status: "online",
+  afk: false,
+};
+
 const MAX_AUTO_LINKS = 4;
 const FRY_LEVELS = ["mild", "crispy", "nuclear"];
 const GIF_SIZES = { small: "320", medium: "480", large: "640", 320: "320", 480: "480", 640: "640" };
@@ -241,6 +249,7 @@ export class Gateway {
               token: this.env.DISCORD_TOKEN,
               intents: INTENTS,
               properties: { os: "cloudflare", browser: "gimmaker", device: "gimmaker" },
+              presence: PRESENCE,
             },
           });
         }
@@ -289,9 +298,11 @@ export class Gateway {
   }
 
   async onDispatch(type, data) {
-    if (type === "READY") {
+    if (type === "READY" || type === "RESUMED") {
       this.lastError = null;
-      await this.state.storage.put({ session: data.session_id, resumeUrl: data.resume_gateway_url });
+      if (type === "READY") await this.state.storage.put({ session: data.session_id, resumeUrl: data.resume_gateway_url });
+      // Resumed sessions keep whatever status they had, so set it again.
+      this.send({ op: 3, d: PRESENCE });
       return;
     }
     if (type !== "MESSAGE_CREATE") return;
