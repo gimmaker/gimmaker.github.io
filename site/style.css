@@ -1,5 +1,5 @@
-/* Editorial black-and-white look: huge condensed serif display type, Helvetica
-   body text, thin rules between rows, text-only navigation. */
+/* Black-and-white tool look: monospace type throughout, thin rules between
+   rows, text-only navigation, compact so the tool fits on one screen. */
 
 :root {
   --bg: #ffffff;
@@ -7,8 +7,7 @@
   --muted: #6b6b6b;
   --rule: #000000;
   --error: #c62828;
-  --display: "Instrument Serif", "Times New Roman", serif;
-  --body: "Helvetica Neue", Helvetica, Arial, system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
   --gutter: clamp(1rem, 2vw, 1.5rem);
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -21,7 +20,7 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--ink);
-  font: 15px/1.3 var(--body);
+  font: 14px/1.45 var(--mono);
   -webkit-font-smoothing: antialiased;
 }
 
@@ -37,38 +36,30 @@ a { color: inherit; }
 /* ---------- Hero ---------- */
 
 .hero {
-  display: flex;
-  flex-direction: column;
-  min-height: 78vh;
-  padding: var(--gutter);
+  padding: 1.25rem var(--gutter) 1.1rem;
   background: var(--ink);
   color: var(--bg);
 }
 
-.hero-top {
-  display: flex;
-  justify-content: space-between;
-  font-size: clamp(1rem, 1.6vw, 1.6rem);
-}
-
 .wordmark {
-  margin: auto 0 0;
-  font: 400 clamp(5rem, 22vw, 22rem) / 0.82 var(--display);
-  letter-spacing: -0.02em;
+  margin: 0;
+  font: 800 clamp(2.4rem, 7vw, 5rem) / 1 var(--mono);
+  letter-spacing: -0.06em;
   overflow: hidden;
 }
 
 .wordmark sup {
-  font-family: var(--body);
-  font-size: 0.12em;
+  font-size: 0.25em;
+  font-weight: 400;
   vertical-align: top;
   position: relative;
-  top: 0.35em;
+  top: 0.4em;
+  margin-left: 0.15em;
 }
 
 .hero-sub {
-  margin: 1rem 0 0;
-  font: 400 clamp(1.5rem, 3.5vw, 3.2rem) / 1.05 var(--display);
+  margin: 0.4rem 0 0;
+  color: #9a9a9a;
   overflow: hidden;
 }
 
@@ -98,15 +89,15 @@ a { color: inherit; }
   align-items: baseline;
   flex-wrap: wrap;
   gap: 0.35rem 0.9rem;
-  margin: 2rem auto 0;
+  margin: 1rem auto 0;
   padding: 0 var(--gutter);
   color: #ffffff;
   mix-blend-mode: difference;
-  font-size: clamp(1.1rem, 1.8vw, 1.6rem);
+  font-size: clamp(0.95rem, 1.3vw, 1.1rem);
   pointer-events: none;
 }
 
-.toolbar-label { font-size: 0.6em; }
+.toolbar-label { font-size: 0.75em; opacity: 0.7; }
 
 .tabs {
   display: flex;
@@ -148,7 +139,7 @@ a { color: inherit; }
 
 /* ---------- Tool panels ---------- */
 
-main { padding: clamp(4rem, 10vw, 8rem) var(--gutter) 4rem; }
+main { padding: 1.5rem var(--gutter) 0.5rem; }
 
 .panel-head {
   display: flex;
@@ -161,21 +152,23 @@ main { padding: clamp(4rem, 10vw, 8rem) var(--gutter) 4rem; }
   margin: 0;
   padding: 0.1em 0 0.05em;
   border-bottom: 1px solid var(--rule);
-  font: 400 clamp(3.2rem, 11vw, 10rem) / 0.95 var(--display);
-  text-align: center;
-  letter-spacing: -0.01em;
+  font: 700 clamp(1.6rem, 3.5vw, 2.6rem) / 1.1 var(--mono);
+  letter-spacing: -0.04em;
 }
 
+/* Controls on the left, media on the right, so nothing needs scrolling. */
 .row {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--gutter);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: calc(var(--gutter) * 2);
+  align-items: start;
   padding-top: 1rem;
 }
 
 .row-label {
-  margin: 0;
-  max-width: 22rem;
+  margin: 0 0 1rem;
+  max-width: 30rem;
+  color: var(--muted);
 }
 
 .row-body { min-width: 0; }
@@ -187,7 +180,7 @@ input {
   border-bottom: 1px solid var(--rule);
   border-radius: 0;
   background: none;
-  font-size: clamp(1.4rem, 2.4vw, 2rem);
+  font-size: clamp(1rem, 1.6vw, 1.3rem);
   outline: none;
 }
 
@@ -220,7 +213,6 @@ input:focus { border-bottom-width: 2px; padding-bottom: calc(0.35rem - 1px); }
 .copy-link {
   display: inline;
   margin: 0 0.5rem 0.7rem 0;
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 0.85rem;
   text-align: left;
   overflow-wrap: anywhere;
@@ -237,8 +229,7 @@ input:focus { border-bottom-width: 2px; padding-bottom: calc(0.35rem - 1px); }
 
 .media {
   display: grid;
-  gap: 1.5rem;
-  margin-top: 1.5rem;
+  gap: 1rem;
 }
 
 .media:empty { display: none; }
@@ -250,7 +241,8 @@ input:focus { border-bottom-width: 2px; padding-bottom: calc(0.35rem - 1px); }
 .media video {
   display: block;
   width: 100%;
-  max-height: 34rem;
+  max-height: calc(100vh - 22rem);
+  min-height: 12rem;
   object-fit: contain;
   background: var(--ink);
 }
@@ -266,27 +258,6 @@ input:focus { border-bottom-width: 2px; padding-bottom: calc(0.35rem - 1px); }
 .download::after { content: "↓"; transition: transform 0.4s var(--ease); }
 .download:hover::after { transform: translateY(0.2em); }
 
-/* ---------- Footer ---------- */
-
-.footer { padding: 0 var(--gutter) var(--gutter); }
-
-.footer-big {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  border-bottom: 1px solid var(--rule);
-  font: 400 clamp(3rem, 9vw, 8rem) / 1 var(--display);
-}
-
-.footer-cols {
-  display: flex;
-  justify-content: space-between;
-  padding-top: 0.5rem;
-}
-
-.footer a { text-decoration: none; }
-.footer a:hover { text-decoration: underline; text-underline-offset: 0.2em; }
-
 .visually-hidden {
   position: absolute;
   width: 1px;
@@ -296,8 +267,9 @@ input:focus { border-bottom-width: 2px; padding-bottom: calc(0.35rem - 1px); }
 }
 
 @media (max-width: 40rem) {
-  .hero { min-height: 62vh; }
   .row { grid-template-columns: 1fr; }
+  .media img,
+  .media video { max-height: 70vh; }
   .media.multi { grid-template-columns: 1fr; }
 }
 

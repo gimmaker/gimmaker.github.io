@@ -81,12 +81,13 @@
     if (!raw) {
       showError("");
       result.hidden = true;
+      mediaBox.replaceChildren();
       return;
     }
     const { fixed, error: message } = fixLink(raw);
     showError(message || "");
     result.hidden = !fixed;
-    if (!fixed) return;
+    if (!fixed) return mediaBox.replaceChildren();
     fixedUrl.textContent = fixed;
     copied.textContent = "";
     loadMedia(raw);
