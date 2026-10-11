@@ -1,5 +1,5 @@
-/* Rihla's layout with techy type: Orbitron wordmark, Michroma headings,
-   wide Saira for tool names and buttons, Montserrat body text. Black hero,
+/* Rihla's layout with techy type: Orbitron wordmark, bold wide Saira for
+   headings, tool names and buttons, Michroma step numbers, Montserrat body text. Black hero,
    numbered sections and radio-style rows divided by hairlines. */
 
 :root {
@@ -149,8 +149,10 @@ main { min-width: 0; }
 
 .section-title {
   margin: 0;
-  font: 400 clamp(1.05rem, 1.7vw, 1.3rem)/1.2 var(--display);
+  font: 700 clamp(1.15rem, 1.8vw, 1.4rem)/1.2 var(--tech);
+  font-stretch: 125%;
   text-transform: uppercase;
+  letter-spacing: 0.03em;
 }
 
 .section-sub {
