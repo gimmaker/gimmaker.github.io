@@ -30,6 +30,10 @@ const ALIASES = {
   gif: "gif",
 };
 
+// Commands that also work straight after "?", like ?deepfry or ?cap. Words
+// that are common in chat (?fix, ?audio...) are left out on purpose.
+const DIRECT = ["help", "gimmideo", "gimmaudio", "deepfry", "fry", "caption", "cap", "gif"];
+
 // "deepfry", "deepfryfc", "Deepfry FC" (the "fc" is dropped later) all match.
 function resolveCommand(word) {
   const w = word.toLowerCase().replace(/[^a-z]/g, "").replace(/fc$/, "");
@@ -45,15 +49,16 @@ export function prefixes(env) {
     .sort((a, b) => b.length - a.length);
 }
 
-function helpText(prefix) {
+function helpText(prefixList) {
   return [
     "**gimmaker** — paste a reel or xeet link and I'll fix the embed automatically. Commands:",
-    `\`${prefix} gimmideo <link>\` (or just \`${prefix} <link>\`) — fixed link + download`,
-    `\`${prefix} gimmaudio replace|remove|extract\` — attach a video (and the new sound for replace)`,
-    `\`${prefix} deepfry [mild|crispy|nuclear]\``,
-    `\`${prefix} caption <text>\``,
-    `\`${prefix} gif [small|medium|large]\` — or a GIF to turn it into a video`,
-    "-# Each takes an attached file, a link, or works as a reply to a message that has one. Slash commands work too.",
+    "`?gimmideo <link>` — fixed link + download",
+    "`?gimmaudio replace|remove|extract` — attach a video (and the new sound for replace)",
+    "`?deepfry [mild|crispy|nuclear]` (or `?fry`)",
+    "`?caption <text>` (or `?cap`)",
+    "`?gif [small|medium|large]` — or a GIF to turn it into a video",
+    `-# Also works as ${prefixList.map((p) => `\`${p} deepfry\``).join(", ")}. ` +
+      "Each takes an attached file, a link, or a reply to a message that has one. Slash commands work too.",
   ].join("\n");
 }
 
@@ -65,6 +70,13 @@ export function planMessage(msg, { base, prefixList }) {
   if (msg.author?.bot || msg.webhook_id) return null;
   const content = msg.content || "";
   const lower = content.toLowerCase();
+  // ?deepfry, ?cap ... straight after a question mark.
+  const direct = lower.match(/^\?([a-z]+)(?=\s|$)/);
+  if (direct && DIRECT.includes(direct[1])) {
+    const words = content.slice(direct[0].length).trim().split(/\s+/).filter(Boolean);
+    if (words[0]?.toLowerCase() === "fc") words.shift();
+    return { kind: "command", prefixList, command: resolveCommand(direct[1]), rest: words.join(" "), spaced: true };
+  }
   const prefix = prefixList.find((p) => lower.startsWith(p));
   if (prefix) {
     const after = content.slice(prefix.length);
@@ -77,7 +89,7 @@ export function planMessage(msg, { base, prefixList }) {
     if (words[0]?.toLowerCase() === "fc") words.shift();
     return {
       kind: "command",
-      prefix,
+      prefixList,
       command: command ? resolveCommand(command) || command.toLowerCase() : "help",
       rest: words.join(" "),
       // "?g dance" was meant for the bot; "?good" probably wasn't.
@@ -110,17 +122,17 @@ function mediaFor(msg, rest) {
 
 // Builds the reply for a prefix command, or null to stay quiet.
 export async function commandReply(plan, msg, base) {
-  const { prefix, command, rest } = plan;
+  const { prefixList, command, rest } = plan;
   const words = rest.toLowerCase().split(/\s+/);
   const { media, link, audio } = mediaFor(msg, rest);
 
-  if (command === "help") return { content: helpText(prefix) };
+  if (command === "help") return { content: helpText(prefixList) };
   if (command === "gimmideo") {
     if (!link) return { content: `⚠️ Add a reel or xeet link, or reply to a message that has one.` };
     return gimmideoMessage(link, base);
   }
   if (!TOOL_NAMES[command]) {
-    return plan.spaced ? { content: `⚠️ I don't know \`${command}\`. Here's what I can do:\n\n${helpText(prefix)}` } : null;
+    return plan.spaced ? { content: `⚠️ I don't know \`${command}\`. Here's what I can do:\n\n${helpText(prefixList)}` } : null;
   }
 
   const options = { tool: command, media, link, audio };
@@ -158,8 +170,16 @@ export class Gateway {
   }
 
   async fetch(request) {
+    // A request from a newer deployment means this copy is running old code:
+    // drop the connection and reset, so the next request starts the new code.
+    const caller = request.headers.get("X-Worker-Version");
+    const mine = this.env.CF_VERSION_METADATA?.id;
+    if (caller && mine && caller !== mine) {
+      this.ws?.close(1000, "new version");
+      this.state.abort("A new version was deployed.");
+    }
     if (new URL(request.url).pathname !== "/status") await this.ensure();
-    return Response.json(this.status());
+    return Response.json({ ...this.status(), version: mine });
   }
 
   async alarm() {

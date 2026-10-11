@@ -25,6 +25,10 @@ class_name = "Gateway"
 tag = "v1"
 new_sqlite_classes = ["Gateway"]
 
+# Lets the bot notice a new deployment and restart onto it.
+[version_metadata]
+binding = "CF_VERSION_METADATA"
+
 # Reconnects the bot if it ever drops.
 [triggers]
 crons = ["* * * * *"]

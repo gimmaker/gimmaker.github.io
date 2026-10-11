@@ -112,10 +112,17 @@ function gateway(env) {
   return env.GATEWAY.get(env.GATEWAY.idFromName("main"));
 }
 
+// Tells the bot which deployment is calling, so an old copy can restart.
+function gatewayRequest(env, path) {
+  return gateway(env).fetch(`https://gateway${path}`, {
+    headers: { "X-Worker-Version": env.CF_VERSION_METADATA?.id || "" },
+  });
+}
+
 export default {
   // Once a minute, make sure the bot is still connected.
   async scheduled(event, env, ctx) {
-    ctx.waitUntil(gateway(env).fetch("https://gateway/ensure"));
+    ctx.waitUntil(gatewayRequest(env, "/ensure"));
   },
 
   async fetch(request, env, ctx) {
@@ -123,7 +130,7 @@ export default {
     const base = url.origin;
     const { pathname, searchParams } = url;
 
-    if (pathname === "/discord/status") return gateway(env).fetch("https://gateway/status");
+    if (pathname === "/discord/status") return gatewayRequest(env, "/status");
     if (pathname === "/discord") return handleDiscord(request, env, ctx, base);
     if (pathname === "/api/media") return apiMedia(searchParams.get("src") || "");
     if (pathname === "/oembed") return json(200, oembedJson(searchParams));
