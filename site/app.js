@@ -10,7 +10,7 @@
   const error = $("error");
   const result = $("result");
   const fixedUrl = $("fixed-url");
-  const copy = $("copy");
+  const copied = $("copied");
   const loading = $("loading");
   const mediaBox = $("media");
 
@@ -66,30 +66,50 @@
     }
   }
 
-  form.addEventListener("submit", (event) => {
-    event.preventDefault();
-    const { fixed, error: message } = fixLink(input.value);
+  let lastLink = "";
+  function update() {
+    const raw = input.value.trim();
+    if (raw === lastLink) return;
+    lastLink = raw;
+    if (!raw) {
+      showError("");
+      result.hidden = true;
+      return;
+    }
+    const { fixed, error: message } = fixLink(raw);
     showError(message || "");
     result.hidden = !fixed;
     if (!fixed) return;
     fixedUrl.textContent = fixed;
-    copy.textContent = "Copy";
-    loadMedia(input.value.trim());
+    copied.textContent = "";
+    loadMedia(raw);
+  }
+
+  // No button: fix the link as soon as it's pasted or typed (Enter also works).
+  let timer;
+  input.addEventListener("input", () => {
+    clearTimeout(timer);
+    timer = setTimeout(update, 300);
+  });
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    update();
   });
 
-  copy.addEventListener("click", async () => {
+  fixedUrl.addEventListener("click", async () => {
     try {
       await navigator.clipboard.writeText(fixedUrl.textContent);
-      copy.textContent = "Copied!";
+      copied.textContent = "Copied!";
     } catch {
-      copy.textContent = "Copy failed";
+      copied.textContent = "Couldn't copy";
     }
+    setTimeout(() => (copied.textContent = ""), 1500);
   });
 
   // Supports sharing a prefilled tool link: ?url=<post link>
   const preset = new URLSearchParams(location.search).get("url");
   if (preset) {
     input.value = preset;
-    form.requestSubmit();
+    update();
   }
 })();

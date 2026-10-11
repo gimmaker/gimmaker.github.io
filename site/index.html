@@ -11,7 +11,7 @@
   <meta property="og:description" content="Fix X/Twitter and Instagram link previews in Discord.">
   <meta name="theme-color" content="#5865f2">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔗</text></svg>">
-  <link rel="stylesheet" href="style.css?v=3">
+  <link rel="stylesheet" href="style.css?v=4">
 </head>
 <body>
   <header class="site-header">
@@ -37,15 +37,15 @@
         <label for="link" class="visually-hidden">Post link</label>
         <input id="link" type="url" inputmode="url" required
                placeholder="https://x.com/user/status/123 or https://www.instagram.com/reel/ABC/">
-        <button type="submit">Fix link</button>
       </form>
       <p id="error" class="error" role="alert" hidden></p>
 
       <div id="result" hidden>
-        <div class="fixed">
-          <code id="fixed-url"></code>
-          <button id="copy" type="button">Copy</button>
-        </div>
+        <details class="fixed">
+          <summary>Fixed link</summary>
+          <button id="fixed-url" class="copy-link" type="button" title="Click to copy"></button>
+          <span id="copied" class="muted" aria-live="polite"></span>
+        </details>
 
         <p id="loading" class="muted" hidden></p>
         <div id="media" class="media"></div>
@@ -68,8 +68,8 @@
     </section>
   </main>
 
-  <script src="tabs.js?v=3"></script>
-  <script src="config.js?v=3"></script>
-  <script src="app.js?v=3"></script>
+  <script src="tabs.js?v=4"></script>
+  <script src="config.js?v=4"></script>
+  <script src="app.js?v=4"></script>
 </body>
 </html>

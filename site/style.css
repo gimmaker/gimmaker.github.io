@@ -142,26 +142,32 @@ button:hover { filter: brightness(1.1); }
 
 .error { color: var(--error); margin: 0.75rem 0 0; }
 
-.fixed {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-top: 1.5rem;
-  padding: 0.5rem 0.5rem 0.5rem 0.9rem;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 8px;
+.fixed { margin-top: 0.75rem; font-size: 0.9rem; }
+
+.fixed summary {
+  cursor: pointer;
+  color: var(--muted);
+  width: fit-content;
+  user-select: none;
 }
 
-.fixed code {
-  flex: 1;
-  min-width: 0;
-  background: none;
+.fixed summary:hover { color: var(--text); }
+
+.copy-link {
+  display: inline;
+  margin: 0.4rem 0.5rem 0 1.1rem;
   padding: 0;
+  background: none;
+  color: var(--accent);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-weight: 400;
+  font-size: inherit;
+  text-align: left;
   overflow-wrap: anywhere;
+  white-space: normal;
 }
 
-.fixed button { padding: 0.5rem 0.9rem; }
+.copy-link:hover { text-decoration: underline; filter: none; }
 
 .media {
   display: grid;
