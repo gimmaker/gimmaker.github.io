@@ -14,17 +14,53 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Montserrat:wght@400;500;600;800&display=swap">
-  <link rel="stylesheet" href="style.css?v=18">
+  <link rel="stylesheet" href="style.css?v=22">
 </head>
 <body>
   <section class="hero">
-    <h1 class="hero-title fade-up">GIMMAKER</h1>
+    <h1 class="hero-title fade-up">
+      GIMMAKER
+      <!-- Skull icon from Lucide (ISC licence). -->
+      <svg class="hero-skull" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12.5 17-.5-1-.5 1h1z"/><path d="M15 22a1 1 0 0 0 1-1v-1a2 2 0 0 0 1.56-3.25 8 8 0 1 0-11.12 0A2 2 0 0 0 8 20v1a1 1 0 0 0 1 1z"/><circle cx="15" cy="12" r="1"/><circle cx="9" cy="12" r="1"/></svg>
+    </h1>
   </section>
 
-  <div class="layout">
-    <aside class="tool-list">
+  <!-- Step 1, pinned: the media stays loaded while you switch between tools. -->
+  <div class="media-row">
+    <section class="source">
       <div class="section-head">
         <span class="section-num">01</span>
+        <div>
+          <h2 class="section-title">Media FC</h2>
+        </div>
+      </div>
+      <form id="form" class="field" autocomplete="off">
+        <label for="link" class="visually-hidden">Post link</label>
+        <input id="link" type="url" inputmode="url" placeholder="Paste a reel or xeet link">
+        <p id="error" class="error" role="alert" hidden></p>
+        <div id="upload-row" class="upload-row">
+          <span class="or">or</span>
+          <label class="upload-btn">
+            <input id="upload" type="file" accept="video/*,image/*" class="visually-hidden">
+            Upload a video, GIF or photo <span class="arrow">↑</span>
+          </label>
+        </div>
+        <p id="source-status" class="source-status" hidden>
+          <span id="source-name"></span>
+          <button id="clear-source" type="button">Clear</button>
+        </p>
+      </form>
+    </section>
+
+    <div class="source-preview">
+      <div id="media" class="media"></div>
+    </div>
+  </div>
+
+  <div class="layout" id="layout">
+    <aside class="tool-list">
+      <div class="section-head">
+        <span class="section-num">02</span>
         <div><h2 class="section-title">Tool FC</h2></div>
       </div>
       <div role="tablist" aria-label="Tools" aria-orientation="vertical">
@@ -67,37 +103,11 @@
     </aside>
 
     <main>
-      <!-- Pinned: the media stays loaded while you switch between tools. -->
-      <section class="source">
-        <div class="section-head">
-          <span class="section-num">02</span>
-          <div>
-            <h2 class="section-title">Your Media</h2>
-          </div>
-        </div>
-        <form id="form" class="field" autocomplete="off">
-          <label for="link" class="visually-hidden">Post link</label>
-          <input id="link" type="url" inputmode="url" placeholder="Paste a reel or xeet link">
-          <p id="error" class="error" role="alert" hidden></p>
-          <div id="upload-row" class="upload-row" hidden>
-            <span class="or">or</span>
-            <label class="upload-btn">
-              <input id="upload" type="file" accept="video/*,image/*" class="visually-hidden">
-              Upload a video, GIF or photo <span class="arrow">↑</span>
-            </label>
-          </div>
-          <p id="source-status" class="source-status" hidden>
-            <span id="source-name"></span>
-            <button id="clear-source" type="button">Clear</button>
-          </p>
-        </form>
-      </section>
-
       <section class="panel" role="tabpanel" id="panel-embed" aria-labelledby="tab-embed">
         <div class="section-head">
           <span class="section-num">03</span>
           <div>
-            <h2 class="section-title">Gimmideo FC</h2>
+            <h2 class="section-title">Result FC</h2>
             <p class="section-sub">Fixed link for Discord, plus downloads</p>
           </div>
         </div>
@@ -116,7 +126,7 @@
         <div class="section-head">
           <span class="section-num">03</span>
           <div>
-            <h2 class="section-title">Gimmaudio FC</h2>
+            <h2 class="section-title">Result FC</h2>
             <p class="section-sub">Replace or remove the audio of a video, or add audio to an image</p>
           </div>
         </div>
@@ -140,7 +150,7 @@
         <div class="section-head">
           <span class="section-num">03</span>
           <div>
-            <h2 class="section-title">Deepfry FC</h2>
+            <h2 class="section-title">Result FC</h2>
             <p class="section-sub">Deepfry a video, image or GIF</p>
           </div>
         </div>
@@ -160,7 +170,7 @@
         <div class="section-head">
           <span class="section-num">03</span>
           <div>
-            <h2 class="section-title">Caption FC</h2>
+            <h2 class="section-title">Result FC</h2>
             <p class="section-sub">Add a caption to a video, image or GIF</p>
           </div>
         </div>
@@ -177,7 +187,7 @@
         <div class="section-head">
           <span class="section-num">03</span>
           <div>
-            <h2 class="section-title">GIF FC</h2>
+            <h2 class="section-title">Result FC</h2>
             <p class="section-sub" id="gif-sub">Convert to a GIF, or convert a GIF to a video</p>
           </div>
         </div>
@@ -194,19 +204,19 @@
       </section>
     </main>
 
-    <aside class="preview">
-      <div class="preview-tabs" id="preview-tabs" hidden>
-        <button type="button" data-view="original" aria-pressed="true">Original</button>
-        <button type="button" data-view="result" aria-pressed="false">Result</button>
-      </div>
-      <div id="media" class="media"></div>
-      <div id="output" class="media" hidden></div>
+    <aside class="preview" id="result-col" hidden>
+      <p class="preview-label">Preview</p>
+      <div id="output" class="media"></div>
     </aside>
   </div>
 
-  <script src="tabs.js?v=18"></script>
-  <script src="config.js?v=18"></script>
-  <script src="app.js?v=18"></script>
-  <script type="module" src="tools.js?v=18"></script>
+  <footer class="footer">
+    <span>made by <a href="https://github.com/qaysarstellar">qaysarstellar</a></span>
+  </footer>
+
+  <script src="tabs.js?v=22"></script>
+  <script src="config.js?v=22"></script>
+  <script src="app.js?v=22"></script>
+  <script type="module" src="tools.js?v=22"></script>
 </body>
 </html>
