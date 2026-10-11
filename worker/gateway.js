@@ -3,8 +3,9 @@
 // Gateway connection, which this Durable Object holds open. An alarm every 30s
 // and a once-a-minute cron (see index.js) reconnect it if it ever drops.
 
-import { canRender, discordApi, gimmideoMessage, handoffMessage, startRender, TOOL_NAMES, workingText } from "./discord.js";
+import { canRender, discordApi, gimmideoMessage, handoffMessage, startRender, TOOL_NAMES, turnedOff, workingText } from "./discord.js";
 import { findPostLink, findPostLinks, fixedLink, isOriginalLink } from "./links.js";
+import { DEFAULTS, isSettingKey } from "./settings.js";
 
 const GATEWAY = "https://gateway.discord.gg/?v=10&encoding=json";
 // GUILDS | GUILD_MESSAGES | DIRECT_MESSAGES | MESSAGE_CONTENT
@@ -66,7 +67,8 @@ function helpText(prefixList) {
     "`?caption <text>` (or `?cap`)",
     "`?gif [small|medium|large]` — or a GIF to turn it into a video",
     `-# Also works as ${prefixList.map((p) => `\`${p} deepfry\``).join(", ")}. ` +
-      "Each takes an attached file, a link, or a reply to a message that has one. Slash commands work too.",
+      "Each takes an attached file, a link, or a reply to a message that has one. Slash commands work too. " +
+      "Server admins: `/settings` turns features on or off.",
   ].join("\n");
 }
 
@@ -129,8 +131,11 @@ function mediaFor(msg, rest) {
 }
 
 // Builds the reply for a prefix command, or null to stay quiet.
-export async function commandReply(plan, msg, base) {
+export async function commandReply(plan, msg, base, settings = DEFAULTS) {
   const { prefixList, command, rest } = plan;
+  if (isSettingKey(command) && !settings[command]) {
+    return { content: turnedOff(TOOL_NAMES[command] || "Gimmideo FC") };
+  }
   const words = rest.toLowerCase().split(/\s+/);
   const { media, link, audio } = mediaFor(msg, rest);
 
@@ -168,6 +173,35 @@ export class Gateway {
     this.lastError = null;
     this.fatalUntil = 0;
     this.connectedAt = null;
+    this.settings = new Map(); // guild id -> settings, cached from storage
+  }
+
+  // ---------- Per-server settings (see settings.js) ----------
+
+  async guildSettings(guildId) {
+    if (!guildId) return DEFAULTS;
+    if (!this.settings.has(guildId)) {
+      const saved = (await this.state.storage.get(`settings:${guildId}`)) || {};
+      this.settings.set(guildId, { ...DEFAULTS, ...saved });
+    }
+    return this.settings.get(guildId);
+  }
+
+  async settingsRequest(request, url) {
+    if (request.method === "GET") return Response.json(await this.guildSettings(url.searchParams.get("guild")));
+    const { guild, key, value, reset } = await request.json();
+    if (!/^\d+$/.test(guild || "")) return new Response("Bad guild.", { status: 400 });
+    let next;
+    if (reset) {
+      next = { ...DEFAULTS };
+      await this.state.storage.delete(`settings:${guild}`);
+    } else {
+      if (!isSettingKey(key)) return new Response("Bad setting.", { status: 400 });
+      next = { ...(await this.guildSettings(guild)), [key]: Boolean(value) };
+      await this.state.storage.put(`settings:${guild}`, next);
+    }
+    this.settings.set(guild, next);
+    return Response.json(next);
   }
 
   status() {
@@ -188,7 +222,9 @@ export class Gateway {
       this.ws?.close(1000, "new version");
       this.state.abort("A new version was deployed.");
     }
-    if (new URL(request.url).pathname !== "/status") await this.ensure();
+    const url = new URL(request.url);
+    if (url.pathname === "/settings") return this.settingsRequest(request, url);
+    if (url.pathname !== "/status") await this.ensure();
     return Response.json({ ...this.status(), version: mine });
   }
 
@@ -313,8 +349,13 @@ export class Gateway {
     const plan = planMessage(data, { base, prefixList: prefixes(this.env) });
     if (!plan) return;
 
+    // Server admins can turn features off with /settings.
+    const settings = await this.guildSettings(data.guild_id);
+    if (plan.kind === "embed" && !settings.autoEmbed) return;
+    if (plan.kind === "command" && !settings.prefix) return;
+
     const reply =
-      plan.kind === "embed" ? { content: plan.links.join("\n") } : await commandReply(plan, data, base);
+      plan.kind === "embed" ? { content: plan.links.join("\n") } : await commandReply(plan, data, base, settings);
     if (!reply) return;
     const { render, ...message } = reply;
     const automatic = render && canRender(this.env);
@@ -329,7 +370,7 @@ export class Gateway {
     }
 
     // Hide the original's broken preview (needs Manage Messages; skipped in DMs).
-    if (plan.kind === "embed" && data.guild_id) {
+    if (plan.kind === "embed" && data.guild_id && settings.hideOriginal) {
       await discordApi(this.env, "PATCH", `/channels/${data.channel_id}/messages/${data.id}`, {
         flags: (data.flags || 0) | SUPPRESS_EMBEDS,
       }, { quiet: true });

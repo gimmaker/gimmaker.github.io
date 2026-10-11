@@ -100,6 +100,11 @@ the bot's DMs, other DMs and group chats.
   10 MB upload limit, the message offers an **Open in gimmaker** button instead. Discord attachments reach the site through `/api/media`, which
   only relays files from Discord's own file hosts.
 
+- **`/settings`** (server admins with Manage Server only) opens one private panel with a toggle
+  button for each feature: auto-embed, hiding the original preview, prefix commands, and each
+  tool. Settings are saved per server (in the Gateway Durable Object) and everything is on by
+  default.
+
 Setup:
 
 1. Create an application at <https://discord.com/developers/applications>.

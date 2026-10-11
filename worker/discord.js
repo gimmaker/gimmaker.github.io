@@ -7,6 +7,7 @@
 
 import { pickMedia } from "./embed.js";
 import { findPostLink, parsePostLink, POST_UNAVAILABLE } from "./links.js";
+import { canManage, changeSettings, getSettings, isSettingKey, settingsPanel } from "./settings.js";
 import { FetchError } from "./util.js";
 
 const SITE = "https://gimmaker.github.io/";
@@ -17,12 +18,16 @@ const USER_AGENT = "DiscordBot (https://github.com/gimmaker/gimmaker.github.io, 
 // Interaction and response types from the Discord API.
 const PING = 1;
 const APPLICATION_COMMAND = 2;
+const MESSAGE_COMPONENT = 3;
 const PONG = 1;
 const MESSAGE = 4;
 const DEFERRED_MESSAGE = 5;
+const UPDATE_MESSAGE = 7;
 const EPHEMERAL = 64;
 
 export const TOOL_NAMES = { gimmaudio: "Gimmaudio FC", deepfry: "Deepfry FC", caption: "Caption FC", gif: "GIF FC" };
+
+export const turnedOff = (label) => `⚠️ **${label}** is turned off in this server.`;
 
 const json = (body, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { "Content-Type": "application/json" } });
@@ -204,6 +209,33 @@ export function workingText(tool) {
   return `⏳ **${TOOL_NAMES[tool]}** is working on it… usually 20–40 seconds.`;
 }
 
+// ---------- /settings ----------
+
+async function settingsCommand(interaction, env) {
+  if (!interaction.guild_id) return privateReply("⚠️ Settings are per server. Use /settings in a server.");
+  if (!canManage(interaction.member)) return privateReply("⚠️ Only people with **Manage Server** can change settings.");
+  const settings = await getSettings(env, interaction.guild_id);
+  return json({ type: MESSAGE, data: { ...settingsPanel(settings), flags: EPHEMERAL } });
+}
+
+// A tap on one of the settings panel's buttons: change it and redraw the panel.
+async function settingsButton(interaction, env) {
+  const id = interaction.data.custom_id || "";
+  if (!id.startsWith("settings:") || !interaction.guild_id) return privateReply("⚠️ That button has expired.");
+  if (!canManage(interaction.member)) return privateReply("⚠️ Only people with **Manage Server** can change settings.");
+
+  let change;
+  if (id === "settings:reset") change = { reset: true };
+  else {
+    const key = id.slice("settings:toggle:".length);
+    if (!isSettingKey(key)) return privateReply("⚠️ That button has expired.");
+    const current = await getSettings(env, interaction.guild_id);
+    change = { key, value: !current[key] };
+  }
+  const settings = await changeSettings(env, interaction.guild_id, change);
+  return json({ type: UPDATE_MESSAGE, data: settingsPanel(settings) });
+}
+
 // ---------- Entry point ----------
 
 export async function handleDiscord(request, env, ctx, base) {
@@ -219,9 +251,19 @@ export async function handleDiscord(request, env, ctx, base) {
 
   const interaction = JSON.parse(body);
   if (interaction.type === PING) return json({ type: PONG });
+  if (interaction.type === MESSAGE_COMPONENT) return settingsButton(interaction, env);
   if (interaction.type !== APPLICATION_COMMAND) return json({ error: "Unsupported interaction" }, 400);
 
   const { name } = interaction.data;
+  if (name === "settings") return settingsCommand(interaction, env);
+
+  // Server admins can turn tools off with /settings.
+  const feature = name === "Gimmideo FC" ? "gimmideo" : name;
+  if (interaction.guild_id && isSettingKey(feature)) {
+    const settings = await getSettings(env, interaction.guild_id);
+    if (!settings[feature]) return privateReply(turnedOff(name === "Gimmideo FC" ? name : TOOL_NAMES[name] || "Gimmideo FC"));
+  }
+
   if (name === "gimmideo") return deferGimmideo(interaction, env, ctx, options(interaction).link, base);
   if (name === "Gimmideo FC") {
     const message = interaction.data.resolved?.messages?.[interaction.data.target_id];

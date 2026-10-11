@@ -12,6 +12,14 @@ const link = { type: STRING, name: "link", description: "…or a reel or xeet li
 
 export const COMMANDS = [
   {
+    name: "settings",
+    description: "Turn gimmaker features on or off for this server",
+    // Servers only, and only people with Manage Server see it by default.
+    integration_types: [0],
+    contexts: [0],
+    default_member_permissions: String(1 << 5),
+  },
+  {
     name: "gimmideo",
     description: "Fix a reel or xeet link so the video plays in Discord, and get a download",
     ...everywhere,
