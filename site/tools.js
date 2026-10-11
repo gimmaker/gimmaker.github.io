@@ -317,8 +317,11 @@ for (const button of document.querySelectorAll(".run")) {
       resultBox.replaceChildren(link);
       resultBox.hidden = false;
       setStatus("Done.");
+      // Lets handoff.js pass the result on (e.g. back to Discord for the bot).
+      document.dispatchEvent(new CustomEvent("gimmaker:result", { detail: { tool: name, blob: out, name: fileName } }));
     } catch (e) {
       setStatus(e.message || "Something went wrong.");
+      document.dispatchEvent(new CustomEvent("gimmaker:error", { detail: { tool: name, message: e.message } }));
     } finally {
       if (ffmpeg) {
         ffmpeg.off("progress", onProgress);

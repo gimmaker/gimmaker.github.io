@@ -1,5 +1,7 @@
 // Opens the site the way the Discord bot asked: picks the tool, loads the
 // link or the attached file, fills in the options and starts the edit.
+// With &deliver=<job>, used by the bot's cloud browser, the finished file is
+// uploaded back to the worker, which posts it into Discord.
 //
 //   ?tool=deepfry&media=<Discord file URL>&level=nuclear&run=1
 //   ?tool=caption&url=<reel or xeet link>&text=hello&run=1
@@ -8,8 +10,34 @@ const g = window.gimmaker;
 const WORKER = (window.GIMMAKER_WORKER_URL || location.origin).replace(/\/$/, "");
 const TABS = { gimmideo: "embed", gimmaudio: "audio", deepfry: "fry", caption: "caption", gif: "gif" };
 
+const MAX_UPLOAD = 10 * 1024 * 1024; // Discord's limit for bots
 const params = new URLSearchParams(location.search);
 const tool = TABS[params.get("tool")];
+const job = params.get("deliver");
+
+// The cloud browser waits for this to be set.
+function finish(ok, error) {
+  window.__gimmakerDone = ok ? { ok: true } : { ok: false, error };
+}
+
+if (job) {
+  document.addEventListener("gimmaker:result", async ({ detail }) => {
+    const size = g.formatSize(detail.blob.size);
+    if (detail.blob.size > MAX_UPLOAD) return finish(false, `the result is ${size}, over Discord's 10 MB limit`);
+    try {
+      const res = await fetch(`${WORKER}/api/deliver?job=${encodeURIComponent(job)}`, {
+        method: "POST",
+        headers: { "Content-Type": detail.blob.type, "X-Filename": detail.name },
+        body: detail.blob,
+      });
+      if (!res.ok) throw new Error(await res.text());
+      finish(true);
+    } catch (e) {
+      finish(false, e.message || "couldn't send the result to Discord");
+    }
+  });
+  document.addEventListener("gimmaker:error", ({ detail }) => finish(false, detail.message));
+}
 
 // Discord's file host can't be read from the browser, so the worker relays it.
 async function relay(src) {
@@ -73,6 +101,7 @@ async function start() {
     }
   } catch (e) {
     say(e.message);
+    if (job) finish(false, e.message);
   }
 }
 

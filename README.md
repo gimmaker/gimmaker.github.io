@@ -91,9 +91,13 @@ the bot's DMs, other DMs and group chats.
   `wrangler.toml`): `help`, `gimmideo <link>`, `gimmaudio replace|remove|extract`,
   `deepfry [mild|crispy|nuclear]`, `caption <text>`, `gif [small|medium|large]`. Each uses an
   attached file, a link, or the message it replies to.
-- `/gimmaudio`, `/deepfry`, `/caption` and `/gif` take a `file` or a `link` plus their options
-  and reply privately with a button. The website opens with everything filled in and runs
-  the edit in the browser. Discord attachments reach the site through `/api/media`, which
+- `/gimmaudio`, `/deepfry`, `/caption` and `/gif` (and their prefix versions) take a `file` or
+  a `link` plus their options. The bot posts "working on it", then a Cloudflare-hosted browser
+  ([Browser Run](https://developers.cloudflare.com/browser-run/), `worker/render.js`) opens the
+  website with everything filled in, runs the edit, and uploads the result through
+  `/api/deliver`, replacing that message with the file. The free plan allows about 10 minutes of
+  browser time a day (roughly 15–30 edits); when it runs out, or a result is over Discord's
+  10 MB upload limit, the message offers an **Open in gimmaker** button instead. Discord attachments reach the site through `/api/media`, which
   only relays files from Discord's own file hosts.
 
 Setup:

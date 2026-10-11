@@ -105,18 +105,19 @@ export async function gimmideoMessage(link, base) {
   return { content: `${base}${url.pathname}${query}`, components: [row(...buttons)] };
 }
 
-// The hand-off reply for an editing tool: a button that opens the website with
-// everything filled in. Returns { error } when something required is missing.
+// What's missing for an editing tool, or null if it's ready to run.
 // tool: gimmaudio | deepfry | caption | gif; media/audio: Discord file URLs.
-export function handoffMessage({ tool, media, link, audio, mode, level, text, size }) {
-  if (!media && !link) return { error: "Attach a file or add a reel or xeet link." };
-  if (!media && parsePostLink(link).error) return { error: parsePostLink(link).error };
-  if (tool === "gimmaudio" && !["replace", "remove", "extract"].includes(mode)) {
-    return { error: "Choose replace, remove or extract." };
-  }
-  if (tool === "gimmaudio" && mode === "replace" && !audio) return { error: "Attach the new sound to replace the audio." };
-  if (tool === "caption" && !text) return { error: "Add the caption text." };
+export function handoffProblem({ tool, media, link, audio, mode, text }) {
+  if (!media && !link) return "Attach a file or add a reel or xeet link.";
+  if (!media && parsePostLink(link).error) return parsePostLink(link).error;
+  if (tool === "gimmaudio" && !["replace", "remove", "extract"].includes(mode)) return "Choose replace, remove or extract.";
+  if (tool === "gimmaudio" && mode === "replace" && !audio) return "Attach the new sound to replace the audio.";
+  if (tool === "caption" && !text) return "Add the caption text.";
+  return null;
+}
 
+// The website settings for an editing tool (see site/handoff.js).
+export function handoffParams({ tool, media, link, audio, mode, level, text, size }) {
   const params = new URLSearchParams({ tool });
   if (media) params.set("media", media);
   else params.set("url", link);
@@ -127,6 +128,16 @@ export function handoffMessage({ tool, media, link, audio, mode, level, text, si
   if (level) params.set("level", level);
   if (text) params.set("text", text);
   if (size) params.set("size", size);
+  return params;
+}
+
+// The hand-off reply for an editing tool: a button that opens the website with
+// everything filled in. Returns { error } when something required is missing.
+export function handoffMessage(options) {
+  const problem = handoffProblem(options);
+  if (problem) return { error: problem };
+  const { tool } = options;
+  const params = handoffParams(options);
   params.set("run", "1");
 
   const url = `${SITE}?${params}`;
@@ -157,9 +168,20 @@ function deferGimmideo(interaction, env, ctx, link, base) {
   return json({ type: DEFERRED_MESSAGE });
 }
 
-function handoff(interaction) {
+// Hands an edit to the cloud browser (render.js), which replaces the "working"
+// message with the finished file. Without it, falls back to the Open button.
+export function startRender(env, options, target) {
+  return env.RENDERER.get(env.RENDERER.idFromName("main")).fetch("https://renderer/render", {
+    method: "POST",
+    body: JSON.stringify({ options, params: Object.fromEntries(handoffParams(options)), target }),
+  });
+}
+
+export const canRender = (env) => Boolean(env.BROWSER && env.RENDERER);
+
+function handoff(interaction, env, ctx) {
   const opts = options(interaction);
-  const result = handoffMessage({
+  const toolOptions = {
     tool: interaction.data.name,
     media: attachment(interaction, opts.file)?.url,
     link: opts.link,
@@ -168,9 +190,17 @@ function handoff(interaction) {
     level: opts.level,
     text: opts.text,
     size: opts.size,
-  });
+  };
+  const result = handoffMessage(toolOptions);
   if (result.error) return privateReply(`⚠️ ${result.error}`);
-  return privateReply(result.content, result.components);
+  if (!canRender(env)) return privateReply(result.content, result.components);
+
+  ctx.waitUntil(startRender(env, toolOptions, { kind: "interaction", token: interaction.token }));
+  return json({ type: MESSAGE, data: { content: workingText(toolOptions.tool) } });
+}
+
+export function workingText(tool) {
+  return `⏳ **${TOOL_NAMES[tool]}** is working on it… usually 20–40 seconds.`;
 }
 
 // ---------- Entry point ----------
@@ -198,6 +228,6 @@ export async function handleDiscord(request, env, ctx, base) {
     if (!link) return privateReply("⚠️ That message doesn't have a reel or xeet link in it.");
     return deferGimmideo(interaction, env, ctx, link, base);
   }
-  if (TOOL_NAMES[name]) return handoff(interaction);
+  if (TOOL_NAMES[name]) return handoff(interaction, env, ctx);
   return privateReply("⚠️ Unknown command.");
 }

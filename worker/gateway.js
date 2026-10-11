@@ -3,7 +3,7 @@
 // Gateway connection, which this Durable Object holds open. An alarm every 30s
 // and a once-a-minute cron (see index.js) reconnect it if it ever drops.
 
-import { discordApi, gimmideoMessage, handoffMessage, TOOL_NAMES } from "./discord.js";
+import { canRender, discordApi, gimmideoMessage, handoffMessage, startRender, TOOL_NAMES, workingText } from "./discord.js";
 import { findPostLink, findPostLinks, fixedLink, isOriginalLink } from "./links.js";
 
 const GATEWAY = "https://gateway.discord.gg/?v=10&encoding=json";
@@ -150,7 +150,9 @@ export async function commandReply(plan, msg, base) {
   if (command === "caption") options.text = rest.replace(link || "", "").trim();
 
   const result = handoffMessage(options);
-  return result.error ? { content: `⚠️ ${result.error}` } : result;
+  if (result.error) return { content: `⚠️ ${result.error}` };
+  // Done in the cloud browser when available; otherwise the Open button.
+  return { ...result, render: options };
 }
 
 // ---------- The Gateway connection ----------
@@ -314,11 +316,17 @@ export class Gateway {
     const reply =
       plan.kind === "embed" ? { content: plan.links.join("\n") } : await commandReply(plan, data, base);
     if (!reply) return;
-    await discordApi(this.env, "POST", `/channels/${data.channel_id}/messages`, {
-      ...reply,
+    const { render, ...message } = reply;
+    const automatic = render && canRender(this.env);
+    const res = await discordApi(this.env, "POST", `/channels/${data.channel_id}/messages`, {
+      ...(automatic ? { content: workingText(render.tool) } : message),
       message_reference: { message_id: data.id, fail_if_not_exists: false },
       allowed_mentions: { replied_user: false },
     });
+    if (automatic && res.ok) {
+      const posted = await res.json();
+      await startRender(this.env, render, { kind: "message", channelId: data.channel_id, messageId: posted.id });
+    }
 
     // Hide the original's broken preview (needs Manage Messages; skipped in DMs).
     if (plan.kind === "embed" && data.guild_id) {

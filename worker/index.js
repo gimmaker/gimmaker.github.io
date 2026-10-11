@@ -8,6 +8,7 @@
 
 import { handleDiscord } from "./discord.js";
 import { Gateway } from "./gateway.js";
+import { MAX_UPLOAD, Renderer } from "./render.js";
 import { oembedJson, pickMedia, renderEmbed, title } from "./embed.js";
 import { fetchInstagram } from "./instagram.js";
 import { matchPost, parsePostLink, POST_UNAVAILABLE } from "./links.js";
@@ -106,7 +107,7 @@ async function apiMedia(src) {
 }
 
 // The Durable Object that keeps the bot connected to Discord.
-export { Gateway };
+export { Gateway, Renderer };
 
 function gateway(env) {
   return env.GATEWAY.get(env.GATEWAY.idFromName("main"));
@@ -131,8 +132,27 @@ export default {
     const { pathname, searchParams } = url;
 
     if (pathname === "/discord/status") return gatewayRequest(env, "/status");
+    // Private end-to-end check of the cloud browser, guarded by a secret key.
+    if (pathname.startsWith("/discord/render-test")) {
+      if (!env.RENDER_TEST_KEY || searchParams.get("key") !== env.RENDER_TEST_KEY) return text(404, "Not found.");
+      const renderer = env.RENDERER.get(env.RENDERER.idFromName("main"));
+      if (pathname.endsWith("/result")) return renderer.fetch("https://renderer/test-result");
+      const options = { tool: searchParams.get("tool") || "deepfry", link: searchParams.get("link"), level: "nuclear", text: "test", size: "320", mode: "extract" };
+      const params = Object.fromEntries(new URLSearchParams([...Object.entries({ tool: options.tool, url: options.link, level: options.level, text: options.text, size: options.size, mode: options.mode })]));
+      return renderer.fetch("https://renderer/render", { method: "POST", body: JSON.stringify({ options, params, target: { kind: "test" } }) });
+    }
     if (pathname === "/discord") return handleDiscord(request, env, ctx, base);
     if (pathname === "/api/media") return apiMedia(searchParams.get("src") || "");
+    // The cloud browser hands finished bot edits back here (see render.js).
+    if (pathname === "/api/deliver" && request.method === "POST") {
+      const job = searchParams.get("job") || "";
+      if (Number(request.headers.get("Content-Length")) > MAX_UPLOAD) return text(413, "Too big for Discord.");
+      return env.RENDERER.get(env.RENDERER.idFromName("main")).fetch(`https://renderer/deliver/${encodeURIComponent(job)}`, {
+        method: "POST",
+        headers: request.headers,
+        body: request.body,
+      });
+    }
     if (pathname === "/oembed") return json(200, oembedJson(searchParams));
     if (pathname === "/api/post") return apiPost(searchParams.get("url") || "", base);
     if (pathname === "/api/download") return apiDownload(searchParams.get("url") || "", searchParams.get("i"));

@@ -1,6 +1,8 @@
 name = "gimmaker"
 main = "worker/index.js"
 compatibility_date = "2026-09-01"
+# Needed by @cloudflare/puppeteer (the bot's cloud browser).
+compatibility_flags = ["nodejs_compat"]
 
 # The website in /site is served for any path the worker doesn't handle,
 # so the worker's own address doubles as the tool's homepage.
@@ -21,9 +23,21 @@ BOT_PREFIXES = "gm6,?gmq,?g,.gmq"
 name = "GATEWAY"
 class_name = "Gateway"
 
+# Runs the bot's edits in a Cloudflare-hosted browser (worker/render.js).
+[[durable_objects.bindings]]
+name = "RENDERER"
+class_name = "Renderer"
+
+[browser]
+binding = "BROWSER"
+
 [[migrations]]
 tag = "v1"
 new_sqlite_classes = ["Gateway"]
+
+[[migrations]]
+tag = "v2"
+new_sqlite_classes = ["Renderer"]
 
 # Lets the bot notice a new deployment and restart onto it.
 [version_metadata]
