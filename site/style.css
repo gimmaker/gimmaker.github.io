@@ -1,4 +1,4 @@
-/* Black-and-white tool look: monospace type throughout, thin rules between
+/* Black-and-white tool look: tight Swiss sans-serif throughout, thin rules between
    rows, text-only navigation, compact so the tool fits on one screen. */
 
 :root {
@@ -7,7 +7,7 @@
   --muted: #6b6b6b;
   --rule: #000000;
   --error: #c62828;
-  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --sans: "Inter Tight", "Helvetica Neue", Helvetica, Arial, sans-serif;
   --gutter: clamp(1rem, 2vw, 1.5rem);
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -20,7 +20,8 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--ink);
-  font: 14px/1.45 var(--mono);
+  font: 15px/1.35 var(--sans);
+  letter-spacing: -0.01em;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -43,8 +44,8 @@ a { color: inherit; }
 
 .wordmark {
   margin: 0;
-  font: 800 clamp(2.4rem, 7vw, 5rem) / 1 var(--mono);
-  letter-spacing: -0.06em;
+  font: 500 clamp(2.6rem, 7.5vw, 5.5rem) / 0.95 var(--sans);
+  letter-spacing: -0.055em;
   overflow: hidden;
 }
 
@@ -152,8 +153,8 @@ main { padding: 1.5rem var(--gutter) 0.5rem; }
   margin: 0;
   padding: 0.1em 0 0.05em;
   border-bottom: 1px solid var(--rule);
-  font: 700 clamp(1.6rem, 3.5vw, 2.6rem) / 1.1 var(--mono);
-  letter-spacing: -0.04em;
+  font: 500 clamp(1.8rem, 4vw, 3rem) / 1.05 var(--sans);
+  letter-spacing: -0.045em;
 }
 
 /* Controls on the left, media on the right, so nothing needs scrolling. */
@@ -212,6 +213,8 @@ input:focus { border-bottom-width: 2px; padding-bottom: calc(0.35rem - 1px); }
 
 .copy-link {
   display: inline;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: 0;
   margin: 0 0.5rem 0.7rem 0;
   font-size: 0.85rem;
   text-align: left;
@@ -241,7 +244,7 @@ input:focus { border-bottom-width: 2px; padding-bottom: calc(0.35rem - 1px); }
 .media video {
   display: block;
   width: 100%;
-  max-height: calc(100vh - 22rem);
+  max-height: calc(100vh - 23rem);
   min-height: 12rem;
   object-fit: contain;
   background: var(--ink);
