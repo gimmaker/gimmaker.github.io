@@ -15,7 +15,6 @@
   const upload = $("upload");
   const sourceStatus = $("source-status");
   const sourceName = $("source-name");
-  const extractEmpty = $("extract-empty");
   const result = $("result");
   const fixedUrl = $("fixed-url");
   const copied = $("copied");
@@ -142,7 +141,6 @@
 
   function resetExtractor() {
     result.hidden = true;
-    extractEmpty.hidden = false;
     downloads.replaceChildren();
     downloads.hidden = true;
   }
@@ -197,7 +195,6 @@
     showError(message || "");
     if (!fixed) return resetExtractor();
     store.set(raw);
-    extractEmpty.hidden = true;
     result.hidden = false;
     fixedUrl.textContent = fixed;
     copied.textContent = "";
