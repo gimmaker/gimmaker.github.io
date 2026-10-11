@@ -7,6 +7,7 @@
 // The website in /site is served for everything else (as static assets).
 
 import { handleDiscord } from "./discord.js";
+import { Gateway } from "./gateway.js";
 import { oembedJson, pickMedia, renderEmbed, title } from "./embed.js";
 import { fetchInstagram } from "./instagram.js";
 import { matchPost, parsePostLink, POST_UNAVAILABLE } from "./links.js";
@@ -104,12 +105,25 @@ async function apiMedia(src) {
   return new Response(upstream.body, { headers });
 }
 
+// The Durable Object that keeps the bot connected to Discord.
+export { Gateway };
+
+function gateway(env) {
+  return env.GATEWAY.get(env.GATEWAY.idFromName("main"));
+}
+
 export default {
+  // Once a minute, make sure the bot is still connected.
+  async scheduled(event, env, ctx) {
+    ctx.waitUntil(gateway(env).fetch("https://gateway/ensure"));
+  },
+
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     const base = url.origin;
     const { pathname, searchParams } = url;
 
+    if (pathname === "/discord/status") return gateway(env).fetch("https://gateway/status");
     if (pathname === "/discord") return handleDiscord(request, env, ctx, base);
     if (pathname === "/api/media") return apiMedia(searchParams.get("src") || "");
     if (pathname === "/oembed") return json(200, oembedJson(searchParams));

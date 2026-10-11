@@ -59,10 +59,37 @@ export function parsePostLink(link) {
   return { url, target };
 }
 
-// First X/Instagram post link in a block of text (e.g. a Discord message).
-export function findPostLink(text) {
-  for (const candidate of text.match(/https?:\/\/[^\s<>|)]+/g) || []) {
-    if (!parsePostLink(candidate).error) return candidate;
+// X/Instagram post links in a block of text (e.g. a Discord message). Links
+// wrapped in <...>, which Discord users write to hide previews, are skipped.
+export function findPostLinks(text) {
+  const found = [];
+  for (const m of text.matchAll(/https?:\/\/[^\s<>|)]+/g)) {
+    if (text[m.index - 1] === "<") continue;
+    if (!parsePostLink(m[0]).error) found.push(m[0]);
   }
-  return null;
+  return found;
+}
+
+// First X/Instagram post link in a block of text.
+export function findPostLink(text) {
+  return findPostLinks(text)[0] || null;
+}
+
+// The gimmaker link for a post link, without fetching anything; null if it
+// isn't a post link.
+export function fixedLink(link, base) {
+  const { url, error } = parsePostLink(link);
+  if (error) return null;
+  const index = url.searchParams.get("img_index");
+  return `${base}${url.pathname}${index ? `?img_index=${index}` : ""}`;
+}
+
+// Links whose previews are broken (as opposed to fixupx etc., which already work).
+const ORIGINAL_HOSTS = /^(www\.|mobile\.)?(x\.com|twitter\.com|instagram\.com)$/i;
+export function isOriginalLink(link) {
+  try {
+    return ORIGINAL_HOSTS.test(new URL(link).hostname);
+  } catch {
+    return false;
+  }
 }

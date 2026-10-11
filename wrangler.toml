@@ -11,3 +11,20 @@ directory = "./site"
 [vars]
 DISCORD_APPLICATION_ID = "1558780667221778495"
 DISCORD_PUBLIC_KEY = "2047f5c9fcd82a6ece5456460b18aae64d468298311aeda4144ad86697bc158b"
+PUBLIC_URL = "https://gimmaker.gimmaker.workers.dev"
+# Prefixes for text commands, comma-separated.
+BOT_PREFIXES = "gm6,?gmq,?g,.gmq"
+
+# Keeps the bot connected to Discord so it can read messages (auto-embed and
+# prefix commands). Needs the DISCORD_TOKEN secret: npx wrangler secret put DISCORD_TOKEN
+[[durable_objects.bindings]]
+name = "GATEWAY"
+class_name = "Gateway"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Gateway"]
+
+# Reconnects the bot if it ever drops.
+[triggers]
+crons = ["* * * * *"]

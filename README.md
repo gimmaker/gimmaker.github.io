@@ -84,6 +84,13 @@ the bot's DMs, other DMs and group chats.
 
 - `/gimmideo link:` and **Apps → Gimmideo FC** (right-click a message) reply with the fixed
   link, so the video plays, plus **Download result** and **Open in gimmaker** buttons.
+- **Auto-embed:** any x.com, twitter.com or instagram.com post link posted where the bot can
+  read messages gets a reply with the fixed link (and the original's broken preview is hidden
+  when the bot has Manage Messages). Links wrapped in `<...>` are left alone.
+- **Prefix commands** (`gm6`, `?gmq`, `?g` or `.gmq`, set by `BOT_PREFIXES` in
+  `wrangler.toml`): `help`, `gimmideo <link>`, `gimmaudio replace|remove|extract`,
+  `deepfry [mild|crispy|nuclear]`, `caption <text>`, `gif [small|medium|large]`. Each uses an
+  attached file, a link, or the message it replies to.
 - `/gimmaudio`, `/deepfry`, `/caption` and `/gif` take a `file` or a `link` plus their options
   and reply privately with a button. The website opens with everything filled in and runs
   the edit in the browser. Discord attachments reach the site through `/api/media`, which
@@ -98,7 +105,17 @@ Setup:
    `https://<worker>/discord`.
 4. Under **Installation**, enable **User Install** and **Guild Install** with the
    `applications.commands` scope.
-5. Register the commands with the bot token (from the **Bot** page; keep it secret):
+5. For auto-embed and prefix commands, the bot keeps a live connection to Discord from a
+   Durable Object (`worker/gateway.js`), checked every minute by a cron trigger. Turn on
+   **Message Content Intent** on the **Bot** page, then give the worker the bot token:
+
+   ```bash
+   npx wrangler secret put DISCORD_TOKEN
+   ```
+
+   `https://<worker>/discord/status` shows whether it's connected. This only works in servers
+   the bot itself has joined (Guild Install with the `bot` scope) and in DMs with the bot.
+6. Register the commands with the bot token (from the **Bot** page; keep it secret):
 
    ```bash
    DISCORD_APPLICATION_ID=... DISCORD_TOKEN=... npm run discord:register
