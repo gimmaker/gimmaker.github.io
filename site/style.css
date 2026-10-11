@@ -1,5 +1,5 @@
-/* Rihla's look: Cinzel display type, Montserrat body text, black header and
-   hero, numbered sections and radio-style rows divided by hairlines. */
+/* Rihla's look: Cinzel display type, Montserrat body text, black hero,
+   numbered sections and radio-style rows divided by hairlines. */
 
 :root {
   --bg: #ffffff;
@@ -12,13 +12,13 @@
   --error: #c62828;
   --display: "Cinzel", Georgia, serif;
   --sans: "Montserrat", ui-sans-serif, system-ui, sans-serif;
-  --pad: clamp(1.25rem, 2.6vw, 2.25rem);
+  --pad: clamp(1.25rem, 2.4vw, 2rem);
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 * { box-sizing: border-box; }
 
-html { background: var(--fg); }
+html { background: var(--bg); }
 
 body {
   margin: 0;
@@ -32,121 +32,42 @@ button,
 input { font: inherit; color: inherit; }
 
 button { background: none; border: 0; padding: 0; cursor: pointer; text-align: left; }
+button:disabled { cursor: progress; opacity: 0.5; }
 
 a { color: inherit; text-decoration: none; }
 
-/* ---------- Header ---------- */
-
-.topbar {
-  position: fixed;
-  inset: 0 0 auto;
-  z-index: 50;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 4rem;
-  padding: 0 var(--pad);
-  background: #000;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  color: #fff;
-}
-
-.topbar-mark {
-  font: 600 1.25rem/1 var(--display);
-  letter-spacing: 0.18em;
-}
-
-.topbar-link {
-  font-size: 1.1rem;
-  transition: color 0.15s;
-}
-
-.topbar-link:hover { color: rgba(255, 255, 255, 0.7); }
+[hidden] { display: none !important; }
 
 /* ---------- Hero ---------- */
 
 .hero {
-  display: flex;
-  flex-direction: column;
-  padding: 5.25rem var(--pad) 1.25rem;
+  padding: 1.75rem var(--pad) 1.5rem;
   background: #000;
   color: #fff;
-  overflow: hidden;
-}
-
-.hero-kicker {
-  margin: 0;
-  color: #a1a1aa;
-  font-size: 1.1rem;
-  font-weight: 500;
-}
-
-.hero-mark {
-  position: relative;
-  margin: 1rem 0 1.25rem;
-  width: fit-content;
-  cursor: default;
-  user-select: none;
-}
-
-.hero-title,
-.hero-ghost {
-  font-family: var(--display);
-  font-weight: 400;
-  line-height: 0.85;
-  letter-spacing: -0.025em;
-  white-space: nowrap;
-  transition: transform 0.3s var(--ease), opacity 0.25s;
-  will-change: transform, opacity;
 }
 
 .hero-title {
-  position: relative;
   margin: 0;
-  font-size: clamp(2.8rem, 7vw, 6rem);
+  font: 400 clamp(2.6rem, 6.5vw, 5.5rem) / 0.85 var(--display);
+  letter-spacing: -0.025em;
 }
 
-.hero-ghost {
-  position: absolute;
-  top: 0;
-  left: 0;
-  font-size: clamp(2.5rem, 6.3vw, 5.4rem);
-  opacity: 0.15;
-  transform: translate(7%, 13%);
-  pointer-events: none;
-}
+/* ---------- Layout: tools | media + tool | preview ---------- */
 
-/* Hover swaps which word is in front. */
-.hero-mark:hover .hero-ghost { opacity: 1; transform: translate(0, 0); }
-.hero-mark:hover .hero-title { opacity: 0.15; transform: translate(7%, 13%); }
-
-.hero-foot {
-  padding-top: 1.25rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.hero-foot p {
-  margin: 0;
-  max-width: 24rem;
-  color: rgba(255, 255, 255, 0.45);
-  font-size: 0.875rem;
-  line-height: 1.625;
-}
-
-/* ---------- Layout ---------- */
-
-/* Tool list on the left, the open tool on the right, so nothing needs scrolling. */
 .layout {
   display: grid;
-  grid-template-columns: minmax(17rem, 24rem) minmax(0, 1fr);
+  grid-template-columns: minmax(16rem, 21rem) minmax(0, 1fr) minmax(0, 1fr);
   align-items: start;
 }
 
-.tool-list {
+.tool-list,
+.preview {
   position: sticky;
-  top: 4rem;
-  border-right: 1px solid var(--hairline);
+  top: 0;
 }
+
+.tool-list { border-right: 1px solid var(--hairline); }
+.preview { border-left: 1px solid var(--hairline); margin-left: -1px; }
 
 main { min-width: 0; }
 
@@ -168,7 +89,7 @@ main { min-width: 0; }
 
 .section-title {
   margin: 0;
-  font: 600 clamp(1.3rem, 2.2vw, 1.7rem)/1.15 var(--display);
+  font: 600 clamp(1.25rem, 2vw, 1.6rem)/1.15 var(--display);
 }
 
 .section-sub {
@@ -184,7 +105,7 @@ main { min-width: 0; }
   grid-template-columns: 1.1rem minmax(0, 1fr);
   gap: 1.1rem;
   width: 100%;
-  padding: 1.1rem var(--pad);
+  padding: 1rem var(--pad);
   border-bottom: 1px solid var(--hairline);
   transition: background-color 0.2s;
 }
@@ -207,7 +128,7 @@ main { min-width: 0; }
   background: radial-gradient(circle, var(--fg) 0 42%, transparent 47%);
 }
 
-.tool-text { display: grid; gap: 0.3rem; }
+.tool-text { display: grid; gap: 0.25rem; }
 
 .tool-name {
   font: 600 1rem/1.3 var(--display);
@@ -224,22 +145,24 @@ main { min-width: 0; }
 
 .tool-desc {
   color: var(--muted);
-  font-size: 0.9rem;
-  line-height: 1.7;
+  font-size: 0.875rem;
+  line-height: 1.6;
 }
 
-/* ---------- Extractor ---------- */
+/* ---------- Your Media (pinned) ---------- */
 
 .field {
-  padding: 1.25rem var(--pad);
+  padding: 1.1rem var(--pad) 1.25rem;
   border-bottom: 1px solid var(--hairline);
 }
 
-input {
+input[type="url"],
+input[type="text"] {
   width: 100%;
   padding: 0.5rem 0;
   border: 0;
   border-bottom: 1px solid var(--hairline);
+  border-radius: 0;
   background: none;
   font-size: 1rem;
   outline: none;
@@ -252,62 +175,184 @@ input:focus { border-bottom-color: var(--fg); }
 
 .error { margin: 0.6rem 0 0; color: var(--error); font-size: 0.85rem; }
 
+.upload-row {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin-top: 0.9rem;
+}
+
+.or { color: var(--faint); font-size: 0.85rem; }
+
+/* Small uppercase links, like Rihla's "EXPLORE →". */
+.upload-btn,
+.fixed summary,
+.source-status button,
+.preview-tabs button {
+  color: rgba(0, 0, 0, 0.4);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.upload-btn:hover,
+.fixed summary:hover,
+.source-status button:hover,
+.preview-tabs button:hover,
+.preview-tabs button[aria-pressed="true"] { color: var(--fg); }
+
+.upload-btn:focus-within { outline: 1px solid var(--fg); outline-offset: 4px; }
+
+.arrow { display: inline-block; transition: transform 0.2s; }
+
+.source-status {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0.9rem 0 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+/* ---------- Tool panels ---------- */
+
+.hint {
+  margin: 1.1rem var(--pad) 0;
+  color: var(--faint);
+  font-size: 0.9rem;
+}
+
+.fixed {
+  margin: 0 var(--pad);
+  border-bottom: 1px solid var(--hairline);
+}
+
+.fixed summary {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem 0 0.75rem;
+  list-style: none;
+  user-select: none;
+}
+
+.fixed summary::-webkit-details-marker { display: none; }
+.fixed[open] summary .arrow { transform: rotate(90deg); }
+.fixed summary:hover .arrow { transform: translateX(2px); }
+.fixed[open] summary:hover .arrow { transform: rotate(90deg); }
+
+.copy-link {
+  display: inline;
+  margin: 0 0.5rem 0.9rem 0;
+  color: var(--fg);
+  font-size: 0.85rem;
+  overflow-wrap: anywhere;
+  text-decoration: underline;
+  text-decoration-color: rgba(0, 0, 0, 0.2);
+  text-underline-offset: 0.25em;
+  transition: text-decoration-color 0.2s;
+}
+
+.copy-link:hover { text-decoration-color: var(--fg); }
+
+.copied { color: var(--muted); font-size: 0.8rem; }
+
+.tool-body {
+  display: grid;
+  gap: 1.1rem;
+  padding: 1.25rem var(--pad) 1.5rem;
+}
+
 /* Bordered option boxes, like Rihla's madhab picker. */
 .options {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
   gap: 1px;
-  margin: 1.25rem var(--pad) 0;
   border: 1px solid var(--hairline);
   background: var(--hairline);
 }
 
-.options-extra { display: contents; }
+#downloads { margin: 1.25rem var(--pad) 0; }
 
-.option {
+.option,
+.pick {
   display: grid;
   justify-items: center;
   align-content: center;
-  gap: 0.35rem;
+  gap: 0.3rem;
   min-width: 0;
-  padding: 1.25rem 1rem;
+  padding: 1.1rem 0.9rem;
   background: var(--bg);
   text-align: center;
+  cursor: pointer;
   transition: background-color 0.2s;
 }
 
-.option:hover { background: var(--row-hover); }
+.option:hover,
+.pick:hover { background: var(--row-hover); }
 
-.option-title {
-  font-weight: 600;
-  font-size: 0.95rem;
-}
+.option[aria-pressed="true"] { background: var(--row-active); }
+.option[aria-pressed="true"] .option-title { text-decoration: underline; text-underline-offset: 0.3em; }
 
-.option-sub {
+.pick { border: 1px solid var(--hairline); }
+.pick:focus-within { outline: 1px solid var(--fg); outline-offset: -1px; }
+
+.option-title,
+.pick-title { font-weight: 600; font-size: 0.95rem; }
+
+.option-sub,
+.pick-sub {
   max-width: 100%;
+  overflow: hidden;
   color: var(--faint);
   font-size: 0.8rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   transition: color 0.2s;
 }
 
-.option:hover .option-sub { color: var(--muted); }
+.option:hover .option-sub,
+.pick:hover .pick-sub { color: var(--muted); }
 
-.option-link {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+/* Primary action: black bar, uppercase like Rihla's labels. */
+.run {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.95rem 1.1rem;
+  background: #000;
+  color: #fff;
+  font-size: 0.75rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  transition: background-color 0.2s;
 }
 
-.loading {
-  margin: 1rem var(--pad) 0;
+.run:hover { background: #262626; }
+.run:hover .arrow { transform: translateX(3px); }
+
+.tool-status {
+  margin: -0.4rem 0 0;
+  min-height: 1.4em;
   color: var(--muted);
-  font-size: 0.9rem;
+  font-size: 0.85rem;
+}
+
+.tool-status:empty { display: none; }
+
+/* ---------- Preview ---------- */
+
+.preview-tabs {
+  display: flex;
+  gap: 1.5rem;
+  padding: 1.1rem var(--pad) 0;
 }
 
 .media {
   display: grid;
   gap: 1rem;
-  padding: 1.25rem var(--pad) 1.5rem;
+  padding: 1.25rem var(--pad);
 }
 
 .media:empty { display: none; }
@@ -317,7 +362,7 @@ input:focus { border-bottom-color: var(--fg); }
 .media video {
   display: block;
   width: 100%;
-  max-height: max(14rem, calc(100vh - 31rem));
+  max-height: calc(100vh - 12rem);
   object-fit: contain;
   background: #000;
 }
@@ -339,29 +384,18 @@ input:focus { border-bottom-color: var(--fg); }
   clip: rect(0 0 0 0);
 }
 
-/* Wide screens: the media gets its own column beside the controls. */
-@media (min-width: 64rem) {
-  #panel-embed:not([hidden]) {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    align-items: start;
-  }
-
-  #panel-embed .media {
-    position: sticky;
-    top: 4rem;
-    border-left: 1px solid var(--hairline);
-  }
-
-  #panel-embed .media img,
-  #panel-embed .media video { max-height: max(14rem, calc(100vh - 24rem)); }
-}
-
-@media (max-width: 52rem) {
-  .layout { grid-template-columns: 1fr; }
-  .tool-list { position: static; border-right: 0; }
+/* Medium screens: preview drops under the tool. */
+@media (max-width: 64rem) {
+  .layout { grid-template-columns: minmax(15rem, 19rem) minmax(0, 1fr); }
+  .preview { grid-column: 2; position: static; border-left: 0; border-top: 1px solid var(--hairline); margin: 0; }
   .media img,
   .media video { max-height: 70vh; }
+}
+
+@media (max-width: 44rem) {
+  .layout { grid-template-columns: 1fr; }
+  .tool-list { position: static; border-right: 0; }
+  .preview { grid-column: 1; }
   .media.multi { grid-template-columns: 1fr; }
 }
 

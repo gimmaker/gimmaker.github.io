@@ -13,129 +13,198 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='black'/><text x='50' y='70' font-family='Georgia' font-size='60' fill='white' text-anchor='middle'>G</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Montserrat:wght@400;500;600&display=swap">
-  <link rel="stylesheet" href="style.css?v=12">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Montserrat:wght@400;500;600;800&display=swap">
+  <link rel="stylesheet" href="style.css?v=15">
 </head>
 <body>
-  <header class="topbar">
-    <a class="topbar-mark" href="./">GIMMAKER</a>
-    <a class="topbar-link" href="https://github.com/gimmaker/gimmaker.github.io">GitHub</a>
-  </header>
-
   <section class="hero">
-    <p class="hero-kicker fade-up">Small tools, one page.</p>
-    <!-- Hovering swaps the ghost word to the front. -->
-    <div class="hero-mark fade-up" style="animation-delay: 0.08s">
-      <span class="hero-ghost" aria-hidden="true">TOOLS</span>
-      <h1 class="hero-title">GIMMAKER</h1>
-    </div>
-    <div class="hero-foot fade-up" style="animation-delay: 0.16s">
-      <p>Extract posts, fix Discord embeds and download media. No sign-up, nothing to install.</p>
-    </div>
+    <h1 class="hero-title fade-up">GIMMAKER</h1>
   </section>
 
   <div class="layout">
     <aside class="tool-list">
       <div class="section-head">
         <span class="section-num">01</span>
-        <div>
-          <h2 class="section-title">Choose Your Tool</h2>
-        </div>
+        <div><h2 class="section-title">Choose Your Tool</h2></div>
       </div>
       <div role="tablist" aria-label="Tools" aria-orientation="vertical">
         <button class="tool-row" role="tab" id="tab-embed" aria-controls="panel-embed" aria-selected="true">
           <span class="radio" aria-hidden="true"></span>
           <span class="tool-text">
-            <span class="tool-name">Gimmick Extractor <span class="tool-alt">X · Instagram</span></span>
-            <span class="tool-desc">Fix X and Instagram embeds for Discord and download the video.</span>
+            <span class="tool-name">Gimmideo Extracter <span class="tool-alt">X · Instagram</span></span>
+            <span class="tool-desc">Fixed links for Discord, plus the video to download.</span>
           </span>
         </button>
-        <button class="tool-row" role="tab" id="tab-tool2" aria-controls="panel-tool2" aria-selected="false" tabindex="-1">
+        <button class="tool-row" role="tab" id="tab-audio" aria-controls="panel-audio" aria-selected="false" tabindex="-1">
           <span class="radio" aria-hidden="true"></span>
           <span class="tool-text">
-            <span class="tool-name">Tool 2 <span class="tool-alt">Soon</span></span>
-            <span class="tool-desc">Coming soon.</span>
+            <span class="tool-name">Replace Audio <span class="tool-alt">Sound</span></span>
+            <span class="tool-desc">Swap the sound on a video, GIF or photo.</span>
           </span>
         </button>
-        <button class="tool-row" role="tab" id="tab-tool3" aria-controls="panel-tool3" aria-selected="false" tabindex="-1">
+        <button class="tool-row" role="tab" id="tab-fry" aria-controls="panel-fry" aria-selected="false" tabindex="-1">
           <span class="radio" aria-hidden="true"></span>
           <span class="tool-text">
-            <span class="tool-name">Tool 3 <span class="tool-alt">Soon</span></span>
-            <span class="tool-desc">Coming soon.</span>
+            <span class="tool-name">Deepfry <span class="tool-alt">Crispy</span></span>
+            <span class="tool-desc">Crush it into oversaturated, low-quality mush.</span>
           </span>
         </button>
-        <button class="tool-row" role="tab" id="tab-tool4" aria-controls="panel-tool4" aria-selected="false" tabindex="-1">
+        <button class="tool-row" role="tab" id="tab-caption" aria-controls="panel-caption" aria-selected="false" tabindex="-1">
           <span class="radio" aria-hidden="true"></span>
           <span class="tool-text">
-            <span class="tool-name">Tool 4 <span class="tool-alt">Soon</span></span>
-            <span class="tool-desc">Coming soon.</span>
+            <span class="tool-name">Caption <span class="tool-alt">Text</span></span>
+            <span class="tool-desc">Add a meme-style caption bar on top.</span>
+          </span>
+        </button>
+        <button class="tool-row" role="tab" id="tab-gif" aria-controls="panel-gif" aria-selected="false" tabindex="-1">
+          <span class="radio" aria-hidden="true"></span>
+          <span class="tool-text">
+            <span class="tool-name">Convert to GIF <span class="tool-alt">Loop</span></span>
+            <span class="tool-desc">Turn a video into a looping GIF.</span>
           </span>
         </button>
       </div>
     </aside>
 
     <main>
-      <section class="panel" role="tabpanel" id="panel-embed" aria-labelledby="tab-embed">
-        <div class="extractor-controls">
+      <!-- Pinned: the media stays loaded while you switch between tools. -->
+      <section class="source">
         <div class="section-head">
           <span class="section-num">02</span>
           <div>
-            <h2 class="section-title">Paste Your Link</h2>
-            <p class="section-sub">X/Twitter and Instagram posts</p>
+            <h2 class="section-title">Your Media</h2>
+            <p class="section-sub">Paste once. Every tool uses it.</p>
           </div>
         </div>
         <form id="form" class="field" autocomplete="off">
           <label for="link" class="visually-hidden">Post link</label>
-          <input id="link" type="url" inputmode="url" required placeholder="https://x.com/… or https://www.instagram.com/…">
+          <input id="link" type="url" inputmode="url" placeholder="Paste an X or Instagram link">
           <p id="error" class="error" role="alert" hidden></p>
+          <div id="upload-row" class="upload-row" hidden>
+            <span class="or">or</span>
+            <label class="upload-btn">
+              <input id="upload" type="file" accept="video/*,image/*" class="visually-hidden">
+              Upload a video, GIF or photo <span class="arrow">↑</span>
+            </label>
+          </div>
+          <p id="source-status" class="source-status" hidden>
+            <span id="source-name"></span>
+            <button id="clear-source" type="button">Clear</button>
+          </p>
         </form>
+      </section>
 
+      <section class="panel" role="tabpanel" id="panel-embed" aria-labelledby="tab-embed">
+        <div class="section-head">
+          <span class="section-num">03</span>
+          <div>
+            <h2 class="section-title">Gimmideo Extracter</h2>
+            <p class="section-sub">Fixed link for Discord, plus downloads</p>
+          </div>
+        </div>
+        <p id="extract-empty" class="hint">Paste an X or Instagram link above.</p>
         <div id="result" hidden>
-          <div class="section-head">
-            <span class="section-num">03</span>
-            <div>
-              <h2 class="section-title">Your Result</h2>
-              <p class="section-sub">Click the fixed link to copy it</p>
-            </div>
+          <details class="fixed">
+            <summary>Fixed link <span class="arrow">→</span></summary>
+            <button id="fixed-url" class="copy-link" type="button" title="Click to copy"></button>
+            <span id="copied" class="copied" aria-live="polite"></span>
+          </details>
+          <p id="loading" class="hint" hidden></p>
+          <div id="downloads" class="options" hidden></div>
+        </div>
+      </section>
+
+      <section class="panel" role="tabpanel" id="panel-audio" aria-labelledby="tab-audio" hidden>
+        <div class="section-head">
+          <span class="section-num">03</span>
+          <div>
+            <h2 class="section-title">Replace Audio</h2>
+            <p class="section-sub">Pick the new sound: an audio file, or a video to take it from</p>
           </div>
-          <div class="options">
-            <button id="fixed-url" class="option" type="button">
-              <span class="option-title">Fixed link</span>
-              <span id="fixed-url-text" class="option-sub option-link"></span>
-            </button>
-            <div id="downloads" class="options-extra"></div>
+        </div>
+        <div class="tool-body">
+          <label class="pick">
+            <input id="audio-file" type="file" accept="audio/*,video/*" class="visually-hidden">
+            <span class="pick-title">Choose audio</span>
+            <span id="audio-name" class="pick-sub">MP3, M4A, WAV or a video</span>
+          </label>
+          <button class="run" type="button" data-tool="audio">Replace audio <span class="arrow">→</span></button>
+          <p class="tool-status" aria-live="polite"></p>
+          <div class="tool-result options" hidden></div>
+        </div>
+      </section>
+
+      <section class="panel" role="tabpanel" id="panel-fry" aria-labelledby="tab-fry" hidden>
+        <div class="section-head">
+          <span class="section-num">03</span>
+          <div>
+            <h2 class="section-title">Deepfry</h2>
+            <p class="section-sub">Oversaturated, crunchy, low quality</p>
           </div>
-          <p id="loading" class="loading" hidden></p>
         </div>
-        </div>
-        <div id="media" class="media"></div>
-      </section>
-
-      <section class="panel" role="tabpanel" id="panel-tool2" aria-labelledby="tab-tool2" hidden>
-        <div class="section-head">
-          <span class="section-num">02</span>
-          <div><h2 class="section-title">Tool 2</h2><p class="section-sub">Coming soon</p></div>
-        </div>
-      </section>
-
-      <section class="panel" role="tabpanel" id="panel-tool3" aria-labelledby="tab-tool3" hidden>
-        <div class="section-head">
-          <span class="section-num">02</span>
-          <div><h2 class="section-title">Tool 3</h2><p class="section-sub">Coming soon</p></div>
+        <div class="tool-body">
+          <div class="options choices" data-choice="fry">
+            <button class="option" type="button" data-value="mild" aria-pressed="false"><span class="option-title">Mild</span><span class="option-sub">Toasted</span></button>
+            <button class="option" type="button" data-value="crispy" aria-pressed="true"><span class="option-title">Crispy</span><span class="option-sub">Deep fried</span></button>
+            <button class="option" type="button" data-value="nuclear" aria-pressed="false"><span class="option-title">Nuclear</span><span class="option-sub">Burnt</span></button>
+          </div>
+          <button class="run" type="button" data-tool="fry">Deepfry <span class="arrow">→</span></button>
+          <p class="tool-status" aria-live="polite"></p>
+          <div class="tool-result options" hidden></div>
         </div>
       </section>
 
-      <section class="panel" role="tabpanel" id="panel-tool4" aria-labelledby="tab-tool4" hidden>
+      <section class="panel" role="tabpanel" id="panel-caption" aria-labelledby="tab-caption" hidden>
         <div class="section-head">
-          <span class="section-num">02</span>
-          <div><h2 class="section-title">Tool 4</h2><p class="section-sub">Coming soon</p></div>
+          <span class="section-num">03</span>
+          <div>
+            <h2 class="section-title">Caption</h2>
+            <p class="section-sub">White bar with your text on top</p>
+          </div>
+        </div>
+        <div class="tool-body">
+          <label for="caption-text" class="visually-hidden">Caption text</label>
+          <input id="caption-text" type="text" placeholder="Type your caption" maxlength="200">
+          <button class="run" type="button" data-tool="caption">Add caption <span class="arrow">→</span></button>
+          <p class="tool-status" aria-live="polite"></p>
+          <div class="tool-result options" hidden></div>
+        </div>
+      </section>
+
+      <section class="panel" role="tabpanel" id="panel-gif" aria-labelledby="tab-gif" hidden>
+        <div class="section-head">
+          <span class="section-num">03</span>
+          <div>
+            <h2 class="section-title">Convert to GIF</h2>
+            <p class="section-sub">Uses the first 15 seconds · size is the longest side</p>
+          </div>
+        </div>
+        <div class="tool-body">
+          <div class="options choices" data-choice="gif">
+            <button class="option" type="button" data-value="320" aria-pressed="false"><span class="option-title">Small</span><span class="option-sub">320 px</span></button>
+            <button class="option" type="button" data-value="480" aria-pressed="true"><span class="option-title">Medium</span><span class="option-sub">480 px</span></button>
+            <button class="option" type="button" data-value="640" aria-pressed="false"><span class="option-title">Large</span><span class="option-sub">640 px</span></button>
+          </div>
+          <button class="run" type="button" data-tool="gif">Convert <span class="arrow">→</span></button>
+          <p class="tool-status" aria-live="polite"></p>
+          <div class="tool-result options" hidden></div>
         </div>
       </section>
     </main>
+
+    <aside class="preview">
+      <div class="preview-tabs" id="preview-tabs" hidden>
+        <button type="button" data-view="original" aria-pressed="true">Original</button>
+        <button type="button" data-view="result" aria-pressed="false">Result</button>
+      </div>
+      <div id="media" class="media"></div>
+      <div id="output" class="media" hidden></div>
+    </aside>
   </div>
 
-  <script src="tabs.js?v=12"></script>
-  <script src="config.js?v=12"></script>
-  <script src="app.js?v=12"></script>
+  <script src="tabs.js?v=15"></script>
+  <script src="config.js?v=15"></script>
+  <script src="app.js?v=15"></script>
+  <script type="module" src="tools.js?v=15"></script>
 </body>
 </html>

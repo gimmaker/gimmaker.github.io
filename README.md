@@ -5,8 +5,13 @@ Fixes X/Twitter and Instagram link previews in Discord (and Telegram, Slack, etc
 
 It has two parts:
 
-- **Website** (`site/`): paste a post link, get the fixed link and a Discord-style preview.
+- **Website** (`site/`): paste a post link (or upload a file) once and use it with every tool.
   Hosted on GitHub Pages.
+  - **Gimmideo Extracter:** the fixed Discord link plus downloads of the post's media.
+  - **Replace Audio, Deepfry, Caption, Convert to GIF:** run in the browser with
+    [ffmpeg.wasm](https://github.com/ffmpegwasm/ffmpeg.wasm), so files never leave the visitor's
+    computer. The ~30 MB engine loads from jsDelivr on first use; the small wrapper files live in
+    `site/vendor/` (refresh them with `npm run vendor`).
 - **Link fixer** (`worker/`): a Cloudflare Worker that serves the previews Discord reads.
   It runs on Cloudflare's free plan, because GitHub Pages can only serve static files.
 

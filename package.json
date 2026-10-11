@@ -4,9 +4,12 @@
   "type": "module",
   "scripts": {
     "dev": "wrangler dev",
-    "deploy": "wrangler deploy"
+    "deploy": "wrangler deploy",
+    "vendor": "rm -rf site/vendor && mkdir -p site/vendor/ffmpeg site/vendor/util && cp node_modules/@ffmpeg/ffmpeg/dist/esm/*.js site/vendor/ffmpeg/ && cp node_modules/@ffmpeg/util/dist/esm/*.js site/vendor/util/"
   },
   "devDependencies": {
+    "@ffmpeg/ffmpeg": "^0.12.15",
+    "@ffmpeg/util": "^0.12.2",
     "wrangler": "^4.149.0"
   },
   "allowScripts": {
