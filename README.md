@@ -8,7 +8,7 @@ It has two parts:
 - **Website** (`site/`): paste a post link (or upload a file) once and use it with every tool.
   Hosted on GitHub Pages.
   - **Gimmideo FC:** download reels and xeets, plus the fixed Discord link.
-  - **Gimmaudio FC** (replace or remove a video's audio, or add audio to an image), **Deepfry FC**,
+  - **Gimmaudio FC** (replace, remove or extract a video's audio, or add audio to an image), **Deepfry FC**,
     **Caption FC** and **GIF FC** (video to GIF, or GIF to video) run in the browser with
     [ffmpeg.wasm](https://github.com/ffmpegwasm/ffmpeg.wasm), so files never leave the visitor's
     computer. The ~30 MB engine loads from jsDelivr on first use; the small wrapper files live in

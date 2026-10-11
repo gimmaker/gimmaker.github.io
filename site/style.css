@@ -403,6 +403,8 @@ a.option:hover .arrow { transform: translateY(2px); }
 .media:empty { display: none; }
 .media.multi { grid-template-columns: 1fr 1fr; }
 
+.media audio { width: 100%; }
+
 .media img,
 .media video {
   display: block;

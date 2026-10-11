@@ -68,6 +68,7 @@
     bytes > 1e6 ? `${(bytes / 1e6).toFixed(1)} MB` : `${Math.max(1, Math.round(bytes / 1e3))} KB`;
 
   function mediaElement(kind, url, poster) {
+    if (kind === "audio") return el("audio", { src: url, controls: true });
     // index.html sets referrer to no-referrer; X and Instagram's CDNs refuse ours.
     return kind === "video"
       ? el("video", { src: url, poster: poster || "", controls: true, muted: true, playsInline: true, loop: true })
@@ -149,10 +150,7 @@
     downloads.replaceChildren(
       ...post.shown.map((m, n) =>
         el("a", { className: "option", href: `${WORKER}/api/download?url=${encodeURIComponent(original)}&i=${m.index}` }, [
-          el("span", { className: "option-title" }, [
-            m.kind === "video" ? "Download video " : "Download photo ",
-            el("span", { className: "arrow", textContent: "↓" }),
-          ]),
+          el("span", { className: "option-title" }, ["Download result ", el("span", { className: "arrow", textContent: "↓" })]),
           el("span", {
             className: "option-sub",
             textContent: (m.kind === "video" ? "MP4" : "JPG") + (post.shown.length > 1 ? ` · ${n + 1}` : ""),
@@ -262,7 +260,7 @@
     },
     showResult(forTool, blob, name) {
       if (results[forTool]) URL.revokeObjectURL(results[forTool].url);
-      const kind = blob.type.startsWith("video/") ? "video" : "image";
+      const kind = blob.type.startsWith("video/") ? "video" : blob.type.startsWith("audio/") ? "audio" : "image";
       results[forTool] = { url: URL.createObjectURL(blob), kind, name, size: blob.size };
       if (forTool === tool) view = "result";
       renderPreview();

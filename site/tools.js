@@ -56,7 +56,7 @@ const x264 = ["-c:v", "libx264", "-preset", "ultrafast", "-pix_fmt", "yuv420p"];
 // Palette tuned for small files: only changed areas are redrawn each frame.
 const gifPalette =
   "split[a][b];[a]palettegen=max_colors=96:stats_mode=diff[p];[b][p]paletteuse=dither=bayer:bayer_scale=5:diff_mode=rectangle";
-const MIME = { mp4: "video/mp4", gif: "image/gif", jpg: "image/jpeg", png: "image/png" };
+const MIME = { mp4: "video/mp4", gif: "image/gif", jpg: "image/jpeg", png: "image/png", mp3: "audio/mpeg" };
 
 function inputName(blob, kind) {
   const fromName = /\.(\w+)$/.exec(blob.name || "")?.[1]?.toLowerCase();
@@ -121,7 +121,12 @@ const FRY = {
 
 const TOOLS = {
   async audio({ ffmpeg, kind, input, written }) {
-    if (choice("audio-mode") === "remove") {
+    const mode = choice("audio-mode");
+    if (mode === "extract") {
+      if (kind !== "video") throw new Error("Images and GIFs have no audio to extract.");
+      return { output: "out.mp3", attempts: [["-i", input, "-vn", "-c:a", "libmp3lame", "-q:a", "2", "out.mp3"]] };
+    }
+    if (mode === "remove") {
       if (kind !== "video") throw new Error("Images and GIFs have no audio to remove.");
       return { output: "out.mp4", attempts: [["-i", input, "-map", "0:v:0", "-c:v", "copy", "-an", "out.mp4"], ["-i", input, "-vf", even, ...x264, "-an", "out.mp4"]] };
     }
@@ -220,10 +225,11 @@ for (const group of document.querySelectorAll("[data-choice]")) {
 }
 
 // Gimmaudio FC: the audio picker only matters when replacing.
+const AUDIO_LABEL = { replace: "Replace audio", remove: "Remove audio", extract: "Extract audio" };
 document.querySelector('[data-choice="audio-mode"]').addEventListener("click", () => {
-  const remove = choice("audio-mode") === "remove";
-  document.getElementById("audio-pick").hidden = remove;
-  document.getElementById("audio-run-label").textContent = remove ? "Remove audio" : "Replace audio";
+  const mode = choice("audio-mode");
+  document.getElementById("audio-pick").hidden = mode !== "replace";
+  document.getElementById("audio-run-label").textContent = AUDIO_LABEL[mode];
 });
 
 const audioFile = document.getElementById("audio-file");
