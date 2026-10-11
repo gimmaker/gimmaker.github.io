@@ -89,12 +89,17 @@ async function gimmideoMessage(link, base) {
   return { content: `${base}${url.pathname}${query}`, components: [row(...buttons)] };
 }
 
-function editOriginal(interaction, env, message) {
-  return fetch(`${API}/webhooks/${env.DISCORD_APPLICATION_ID}/${interaction.token}/messages/@original`, {
+async function editOriginal(interaction, env, message) {
+  const res = await fetch(`${API}/webhooks/${env.DISCORD_APPLICATION_ID}/${interaction.token}/messages/@original`, {
     method: "PATCH",
-    headers: { "Content-Type": "application/json" },
+    // Discord's API rejects requests without a bot-style User-Agent.
+    headers: {
+      "Content-Type": "application/json",
+      "User-Agent": "DiscordBot (https://github.com/gimmaker/gimmaker.github.io, 1.0)",
+    },
     body: JSON.stringify(message),
   });
+  if (!res.ok) console.error(`Discord follow-up failed: ${res.status} ${await res.text()}`);
 }
 
 // Fetching the post can take a moment, so acknowledge first and fill in after.
