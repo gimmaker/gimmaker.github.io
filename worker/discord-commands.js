@@ -7,8 +7,8 @@ const everywhere = { integration_types: [0, 1], contexts: [0, 1, 2] };
 const STRING = 3;
 const ATTACHMENT = 11;
 
-const file = { type: ATTACHMENT, name: "file", description: "Video, GIF or image to use" };
-const link = { type: STRING, name: "link", description: "…or a reel or xeet link instead of a file" };
+const media = { type: ATTACHMENT, name: "media", description: "The video, GIF or image to edit" };
+const link = { type: STRING, name: "link", description: "…or a reel or xeet link to edit instead of uploading" };
 
 export const COMMANDS = [
   {
@@ -31,17 +31,21 @@ export const COMMANDS = [
       {
         type: STRING,
         name: "mode",
-        description: "What to do with the audio",
+        description: "What to do with the sound",
         required: true,
         choices: [
-          { name: "Replace", value: "replace" },
-          { name: "Remove", value: "remove" },
-          { name: "Extract as MP3", value: "extract" },
+          { name: "Replace the sound", value: "replace" },
+          { name: "Remove the sound", value: "remove" },
+          { name: "Extract the sound as MP3", value: "extract" },
         ],
       },
-      file,
+      media,
       link,
-      { type: ATTACHMENT, name: "audio", description: "The new sound, for Replace (audio file or a video)" },
+      {
+        type: ATTACHMENT,
+        name: "replacement-audio",
+        description: "The new sound, for Replace: an audio file, or a video to take it from",
+      },
     ],
   },
   {
@@ -49,7 +53,7 @@ export const COMMANDS = [
     description: "Deepfry a video, image or GIF",
     ...everywhere,
     options: [
-      file,
+      media,
       link,
       {
         type: STRING,
@@ -68,8 +72,8 @@ export const COMMANDS = [
     description: "Add a caption to a video, image or GIF",
     ...everywhere,
     options: [
-      { type: STRING, name: "text", description: "The caption", required: true, max_length: 100 },
-      file,
+      { type: STRING, name: "text", description: "The caption to put on top", required: true, max_length: 100 },
+      media,
       link,
     ],
   },
@@ -78,7 +82,7 @@ export const COMMANDS = [
     description: "Convert to a GIF, or convert a GIF to a video",
     ...everywhere,
     options: [
-      file,
+      media,
       link,
       {
         type: STRING,

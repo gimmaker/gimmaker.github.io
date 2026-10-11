@@ -108,10 +108,10 @@ export async function gimmideoMessage(link, base) {
 // What's missing for an editing tool, or null if it's ready to run.
 // tool: gimmaudio | deepfry | caption | gif; media/audio: Discord file URLs.
 export function handoffProblem({ tool, media, link, audio, mode, text }) {
-  if (!media && !link) return "Attach a file or add a reel or xeet link.";
+  if (!media && !link) return "Add the media to edit, or a reel or xeet link.";
   if (!media && parsePostLink(link).error) return parsePostLink(link).error;
   if (tool === "gimmaudio" && !["replace", "remove", "extract"].includes(mode)) return "Choose replace, remove or extract.";
-  if (tool === "gimmaudio" && mode === "replace" && !audio) return "Attach the new sound to replace the audio.";
+  if (tool === "gimmaudio" && mode === "replace" && !audio) return "Add the replacement audio (an audio file or a video).";
   if (tool === "caption" && !text) return "Add the caption text.";
   return null;
 }
@@ -183,9 +183,10 @@ function handoff(interaction, env, ctx) {
   const opts = options(interaction);
   const toolOptions = {
     tool: interaction.data.name,
-    media: attachment(interaction, opts.file)?.url,
+    // "file"/"audio" are the old option names, kept until commands are re-registered.
+    media: attachment(interaction, opts.media ?? opts.file)?.url,
     link: opts.link,
-    audio: attachment(interaction, opts.audio)?.url,
+    audio: attachment(interaction, opts["replacement-audio"] ?? opts.audio)?.url,
     mode: opts.mode,
     level: opts.level,
     text: opts.text,
