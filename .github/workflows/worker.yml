@@ -1,0 +1,25 @@
+# Deploys the link fixer to Cloudflare Workers on every push to main.
+# Needs repo secrets CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID; skipped until they exist.
+name: Deploy worker to Cloudflare
+
+on:
+  push:
+    branches: [main]
+    paths: ["worker/**", "site/**", "wrangler.toml", "package.json", "package-lock.json", ".github/workflows/worker.yml"]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      HAS_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN != '' }}
+    steps:
+      - if: env.HAS_TOKEN != 'true'
+        run: echo "::notice::CLOUDFLARE_API_TOKEN isn't set, so the worker deploy was skipped."
+      - if: env.HAS_TOKEN == 'true'
+        uses: actions/checkout@v4
+      - if: env.HAS_TOKEN == 'true'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

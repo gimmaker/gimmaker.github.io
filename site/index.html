@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- X and Instagram's media servers reject requests that carry our site as the referrer. -->
+  <meta name="referrer" content="no-referrer">
+  <title>gimmaker</title>
+  <meta name="description" content="Fix X/Twitter and Instagram link previews in Discord.">
+  <meta property="og:title" content="gimmaker">
+  <meta property="og:description" content="Fix X/Twitter and Instagram link previews in Discord.">
+  <meta name="theme-color" content="#5865f2">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔗</text></svg>">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main>
+    <header>
+      <h1>gimmaker</h1>
+      <p class="tagline">Paste an X or Instagram link. Get one that shows the full post, video included, when you send it in Discord.</p>
+    </header>
+
+    <form id="form" autocomplete="off">
+      <label for="link" class="visually-hidden">Post link</label>
+      <input id="link" type="url" inputmode="url" required
+             placeholder="https://x.com/user/status/123 or https://www.instagram.com/reel/ABC/">
+      <button type="submit">Fix link</button>
+    </form>
+    <p id="error" class="error" role="alert" hidden></p>
+
+    <section id="result" hidden>
+      <div class="fixed">
+        <code id="fixed-url"></code>
+        <button id="copy" type="button">Copy</button>
+      </div>
+
+      <h2>Preview</h2>
+      <p id="loading" class="muted">Loading post…</p>
+      <article id="card" class="card" hidden>
+        <div class="card-body">
+          <div class="provider" id="card-provider"></div>
+          <div class="stats" id="card-stats"></div>
+          <div class="card-title" id="card-title"></div>
+          <p class="card-text" id="card-text"></p>
+          <div class="card-media" id="card-media"></div>
+        </div>
+      </article>
+    </section>
+
+    <section class="how">
+      <h2>How it works</h2>
+      <p>Discord builds link previews by fetching the page and reading its preview tags. X and Instagram give Discord
+        a weak preview without playable video. gimmaker fetches the post itself and hands Discord a preview with the
+        text, photos and the actual video file. Anyone who clicks the link is sent straight to the original post.</p>
+      <p>You can also fix links by hand: swap <code>x.com</code> or <code>instagram.com</code> for this site's link-fixing address and keep the rest of the link.</p>
+      <p class="muted">Works with public posts only. <a href="https://github.com/qaysarstellar/gimmaker">Source on GitHub</a>.</p>
+    </section>
+  </main>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+name = "gimmaker"
+main = "worker/index.js"
+compatibility_date = "2026-09-01"
+
+# The website in /site is served for any path the worker doesn't handle,
+# so the worker's own address doubles as the tool's homepage.
+[assets]
+directory = "./site"
