@@ -1,4 +1,4 @@
-// Pinned media (link or upload), Gimmideo FC, and the preview column.
+// Pinned media (link or upload) with its preview, and Gimmideo FC.
 // Exposes window.gimmaker so tools.js can read the media and show results.
 (() => {
   const WORKER = (window.GIMMAKER_WORKER_URL || location.origin).replace(/\/$/, "");
@@ -19,14 +19,14 @@
   const copied = $("copied");
   const loading = $("loading");
   const downloads = $("downloads");
-  const layout = $("layout");
-  const resultCol = $("result-col");
+  const previewTabs = $("preview-tabs");
   const mediaBox = $("media");
   const outputBox = $("output");
 
   let tool = "embed";
   let source = null; // { type: "link", original, site, item } or { type: "file", file, kind, url }
   const results = {}; // tool -> { url, kind, name, size }
+  let view = "original";
 
   const store = {
     get() {
@@ -74,16 +74,27 @@
       : el("img", { src: url, alt: "" });
   }
 
-  // ---------- Result column ----------
-  // The original stays visible in Media FC; the result column appears beside
-  // the tool once that tool has produced something.
+  // ---------- Preview (in Media FC) ----------
+  // Shows the original, or the current tool's result, with a switch between them.
 
   function renderPreview() {
     const res = results[tool];
-    resultCol.hidden = !res;
-    layout.classList.toggle("has-result", Boolean(res));
+    if (!res) view = "original";
+    previewTabs.hidden = !res;
+    for (const b of previewTabs.querySelectorAll("button")) {
+      b.setAttribute("aria-pressed", String(b.dataset.view === view));
+    }
+    mediaBox.hidden = view !== "original";
+    outputBox.hidden = view !== "result";
     outputBox.replaceChildren(...(res ? [mediaElement(res.kind, res.url)] : []));
   }
+
+  previewTabs.addEventListener("click", (event) => {
+    const button = event.target.closest("button[data-view]");
+    if (!button) return;
+    view = button.dataset.view;
+    renderPreview();
+  });
 
   // ---------- Pinned source ----------
 
@@ -105,6 +116,7 @@
     } else {
       mediaBox.replaceChildren();
     }
+    view = "original";
     renderPreview();
   }
 
@@ -214,6 +226,7 @@
 
   document.addEventListener("toolchange", (event) => {
     tool = event.detail;
+    view = results[tool] ? "result" : "original";
     renderPreview();
   });
 
@@ -248,6 +261,7 @@
       if (results[forTool]) URL.revokeObjectURL(results[forTool].url);
       const kind = blob.type.startsWith("video/") ? "video" : "image";
       results[forTool] = { url: URL.createObjectURL(blob), kind, name, size: blob.size };
+      if (forTool === tool) view = "result";
       renderPreview();
       return results[forTool];
     },

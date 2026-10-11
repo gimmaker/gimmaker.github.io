@@ -14,14 +14,13 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Montserrat:wght@400;500;600;800&display=swap">
-  <link rel="stylesheet" href="style.css?v=22">
+  <link rel="stylesheet" href="style.css?v=24">
 </head>
 <body>
   <section class="hero">
     <h1 class="hero-title fade-up">
       GIMMAKER
-      <!-- Skull icon from Lucide (ISC licence). -->
-      <svg class="hero-skull" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12.5 17-.5-1-.5 1h1z"/><path d="M15 22a1 1 0 0 0 1-1v-1a2 2 0 0 0 1.56-3.25 8 8 0 1 0-11.12 0A2 2 0 0 0 8 20v1a1 1 0 0 0 1 1z"/><circle cx="15" cy="12" r="1"/><circle cx="9" cy="12" r="1"/></svg>
+      <span class="hero-skull" aria-hidden="true">☠️</span>
     </h1>
   </section>
 
@@ -53,7 +52,12 @@
     </section>
 
     <div class="source-preview">
+      <div class="preview-tabs" id="preview-tabs" hidden>
+        <button type="button" data-view="original" aria-pressed="true">Original</button>
+        <button type="button" data-view="result" aria-pressed="false">Result</button>
+      </div>
       <div id="media" class="media"></div>
+      <div id="output" class="media" hidden></div>
     </div>
   </div>
 
@@ -204,19 +208,15 @@
       </section>
     </main>
 
-    <aside class="preview" id="result-col" hidden>
-      <p class="preview-label">Preview</p>
-      <div id="output" class="media"></div>
-    </aside>
   </div>
 
   <footer class="footer">
     <span>made by <a href="https://github.com/qaysarstellar">qaysarstellar</a></span>
   </footer>
 
-  <script src="tabs.js?v=22"></script>
-  <script src="config.js?v=22"></script>
-  <script src="app.js?v=22"></script>
-  <script type="module" src="tools.js?v=22"></script>
+  <script src="tabs.js?v=24"></script>
+  <script src="config.js?v=24"></script>
+  <script src="app.js?v=24"></script>
+  <script type="module" src="tools.js?v=24"></script>
 </body>
 </html>
