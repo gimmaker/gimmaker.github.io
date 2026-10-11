@@ -149,7 +149,10 @@
     downloads.replaceChildren(
       ...post.shown.map((m, n) =>
         el("a", { className: "option", href: `${WORKER}/api/download?url=${encodeURIComponent(original)}&i=${m.index}` }, [
-          el("span", { className: "option-title", textContent: m.kind === "video" ? "Download video" : "Download photo" }),
+          el("span", { className: "option-title" }, [
+            m.kind === "video" ? "Download video " : "Download photo ",
+            el("span", { className: "arrow", textContent: "↓" }),
+          ]),
           el("span", {
             className: "option-sub",
             textContent: (m.kind === "video" ? "MP4" : "JPG") + (post.shown.length > 1 ? ` · ${n + 1}` : ""),

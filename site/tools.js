@@ -306,7 +306,7 @@ for (const button of document.querySelectorAll(".run")) {
       link.className = "option";
       link.href = res.url;
       link.download = fileName;
-      link.innerHTML = `<span class="option-title">Download result</span><span class="option-sub"></span>`;
+      link.innerHTML = `<span class="option-title">Download result <span class="arrow">↓</span></span><span class="option-sub"></span>`;
       link.querySelector(".option-sub").textContent = `${ext.toUpperCase()} · ${g.formatSize(out.size)}`;
       resultBox.replaceChildren(link);
       resultBox.hidden = false;
