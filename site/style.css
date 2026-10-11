@@ -69,6 +69,17 @@ a { color: inherit; text-decoration: none; }
 
 .hero-title:hover .hero-skull { transform: rotate(-8deg) scale(1.06); }
 
+/* Slim "\\\\" strip under the header; the footer ends in the same pattern. */
+.hatch-bar,
+.footer::after {
+  background: #000 repeating-linear-gradient(45deg, transparent 0 9px, rgba(255, 255, 255, 0.22) 9px 10px);
+}
+
+.hatch-bar {
+  height: 2.25rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
 /* ---------- Step 1: Media FC, with the media beside the link ---------- */
 
 .media-row {
@@ -417,7 +428,8 @@ a.option:hover .arrow { transform: translateY(2px); }
 /* ---------- Footer ---------- */
 
 .footer {
-  padding: 1.1rem var(--pad);
+  display: grid;
+  grid-template-columns: auto 1fr;
   background: #000;
   border-top: 1px solid rgba(255, 255, 255, 0.06);
   color: rgba(255, 255, 255, 0.45);
@@ -425,6 +437,10 @@ a.option:hover .arrow { transform: translateY(2px); }
   letter-spacing: 0.18em;
   text-transform: uppercase;
 }
+
+.footer > span { padding: 1.1rem 1.25rem 1.1rem var(--pad); }
+
+.footer::after { content: ""; }
 
 .footer a { color: rgba(255, 255, 255, 0.8); transition: color 0.15s; }
 .footer a:hover { color: #fff; }
