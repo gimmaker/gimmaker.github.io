@@ -14,7 +14,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Montserrat:wght@400;500;600;800&display=swap">
-  <link rel="stylesheet" href="style.css?v=17">
+  <link rel="stylesheet" href="style.css?v=18">
 </head>
 <body>
   <section class="hero">
@@ -39,7 +39,7 @@
           <span class="radio" aria-hidden="true"></span>
           <span class="tool-text">
             <span class="tool-name">Gimmaudio FC</span>
-            <span class="tool-desc">Replace the audio of a video, or add audio to an image.</span>
+            <span class="tool-desc">Replace or remove the audio of a video, or add audio to an image.</span>
           </span>
         </button>
         <button class="tool-row" role="tab" id="tab-fry" aria-controls="panel-fry" aria-selected="false" tabindex="-1">
@@ -117,16 +117,20 @@
           <span class="section-num">03</span>
           <div>
             <h2 class="section-title">Gimmaudio FC</h2>
-            <p class="section-sub">Replace the audio of a video, or add audio to an image</p>
+            <p class="section-sub">Replace or remove the audio of a video, or add audio to an image</p>
           </div>
         </div>
         <div class="tool-body">
-          <label class="pick">
+          <div class="options choices" data-choice="audio-mode">
+            <button class="option" type="button" data-value="replace" aria-pressed="true"><span class="option-title">Replace</span><span class="option-sub">New sound</span></button>
+            <button class="option" type="button" data-value="remove" aria-pressed="false"><span class="option-title">Remove</span><span class="option-sub">Silent video</span></button>
+          </div>
+          <label class="pick" id="audio-pick">
             <input id="audio-file" type="file" accept="audio/*,video/*" class="visually-hidden">
             <span class="pick-title">Choose audio</span>
             <span id="audio-name" class="pick-sub">MP3, M4A, WAV or a video</span>
           </label>
-          <button class="run" type="button" data-tool="audio">Gimmaudio <span class="arrow">→</span></button>
+          <button class="run" type="button" data-tool="audio"><span id="audio-run-label">Replace audio</span> <span class="arrow">→</span></button>
           <p class="tool-status" aria-live="polite"></p>
           <div class="tool-result options" hidden></div>
         </div>
@@ -200,9 +204,9 @@
     </aside>
   </div>
 
-  <script src="tabs.js?v=17"></script>
-  <script src="config.js?v=17"></script>
-  <script src="app.js?v=17"></script>
-  <script type="module" src="tools.js?v=17"></script>
+  <script src="tabs.js?v=18"></script>
+  <script src="config.js?v=18"></script>
+  <script src="app.js?v=18"></script>
+  <script type="module" src="tools.js?v=18"></script>
 </body>
 </html>

@@ -121,6 +121,10 @@ const FRY = {
 
 const TOOLS = {
   async audio({ ffmpeg, kind, input, written }) {
+    if (choice("audio-mode") === "remove") {
+      if (kind !== "video") throw new Error("Images and GIFs have no audio to remove.");
+      return { output: "out.mp4", attempts: [["-i", input, "-map", "0:v:0", "-c:v", "copy", "-an", "out.mp4"], ["-i", input, "-vf", even, ...x264, "-an", "out.mp4"]] };
+    }
     const file = document.getElementById("audio-file").files[0];
     if (!file) throw new Error("Choose the new audio first.");
     const audio = `audio.${/\.(\w+)$/.exec(file.name)?.[1] || "mp3"}`;
@@ -214,6 +218,13 @@ for (const group of document.querySelectorAll("[data-choice]")) {
     for (const o of group.querySelectorAll(".option")) o.setAttribute("aria-pressed", String(o === option));
   });
 }
+
+// Gimmaudio FC: the audio picker only matters when replacing.
+document.querySelector('[data-choice="audio-mode"]').addEventListener("click", () => {
+  const remove = choice("audio-mode") === "remove";
+  document.getElementById("audio-pick").hidden = remove;
+  document.getElementById("audio-run-label").textContent = remove ? "Remove audio" : "Replace audio";
+});
 
 const audioFile = document.getElementById("audio-file");
 audioFile.addEventListener("change", () => {
